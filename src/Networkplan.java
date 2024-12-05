@@ -22,4 +22,8 @@ public class Networkplan {
         this.listOfProcesses = newListOfProcesses;
     }
 
+    public List<Process> getListOfProcesses() {
+        return listOfProcesses;
+    }
+
 }
