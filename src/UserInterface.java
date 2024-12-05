@@ -13,5 +13,57 @@ public class UserInterface {
     }
 
 
+    public void menu() {
+        int choice;
+        System.out.println("Hallo");
+
+        // Prüfen Ob in der Liste Lerr
+        if (NetworkplanList.isListEmpty()) {
+
+            System.out.println("'1' Erstellen");
+            System.out.println("'0' Beenden");
+
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    scanner.nextLine();
+                    showOptionsCreate();
+                    break;
+                case 0:
+                    System.out.println("Programm wird beendet...");
+                    break;
+            }
+
+        } else {
+
+        }
+    }
+
+
+    public void showOptionsCreate() {
+        clearConsole();
+        String netzplanname;
+        System.out.println("Bitte geben Sie den Netzplannamen an:");
+        System.out.println("'0' Abbrechen");
+
+        netzplanname = scanner.nextLine();
+
+
+        switch (netzplanname) {
+            case "0" :
+                System.out.println("Das Erstellen wurde abgebrochen.");
+                break;
+        }
+
+    }
+
+
+    public void clearConsole() {
+        for (int i = 0; i < 10; i++) {
+            System.out.println();
+        }
+    }
+
 
 }
