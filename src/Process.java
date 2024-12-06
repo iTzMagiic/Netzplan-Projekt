@@ -1,18 +1,18 @@
-import java.util.ArrayList;
-import java.util.List;
-
 public class Process {
 
     private String name;
     private int duration;
-    private int faz, fez, saz, sez, freierPuffer, gesamtPuffer;
+    private int faz, fez, saz, sez, fp, gp;
+    private int[] dependencies;
 
     // Konstruktor
-    public Process(String name, int duration) {
+    public Process(String name, int duration, int[] dependencies) {
         this.name = name;
         this.duration = duration;
+        this.dependencies = dependencies;
     }
 
+    // Getter & Setter
     public String getName() {
         return name;
     }
@@ -61,20 +61,20 @@ public class Process {
         this.sez = sez;
     }
 
-    public int getFreierPuffer() {
-        return freierPuffer;
+    public int getFp() {
+        return fp;
     }
 
-    public void setFreierPuffer(int freierPuffer) {
-        this.freierPuffer = freierPuffer;
+    public void setFp(int fp) {
+        this.fp = fp;
     }
 
-    public int getGesamtPuffer() {
-        return gesamtPuffer;
+    public int getGp() {
+        return gp;
     }
 
-    public void setGesamtPuffer(int gesamtPuffer) {
-        this.gesamtPuffer = gesamtPuffer;
+    public void setGp(int gp) {
+        this.gp = gp;
     }
 
     @Override
