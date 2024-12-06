@@ -8,17 +8,21 @@ public class Networkplan {
 
 
 
+    // Konstruktor
     public Networkplan(String name) {
         this.name = name;
+
+        // Jeder neuer Netzplan erstellt seine eigene Liste
         listOfProcesses = new ArrayList<>();
     }
 
 
+    // Fügt der Liste ein neuen vorgang hinzu
     public void addProcess(Process process) {
         listOfProcesses.add(process);
     }
 
-    public void addNewListOfProcesses(List<Process> newListOfProcesses) {
+    public void overrideListOfProcesses(List<Process> newListOfProcesses) {
         this.listOfProcesses = newListOfProcesses;
     }
 
