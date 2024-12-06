@@ -8,6 +8,13 @@ public class NetworkplanList {
 
     private NetworkplanList() {}
 
+    public static List<Networkplan> getNetworkplan(){
+        return listOfPlan;
+    }
+
+    public static Networkplan getNetworkplanChoice(int index){
+        return listOfPlan.get(index);
+    }
 
     public static void addNetworkplan(Networkplan p) {
         listOfPlan.add(p);
@@ -16,4 +23,5 @@ public class NetworkplanList {
     public static boolean isListEmpty() {
         return listOfPlan == null || listOfPlan.isEmpty();
     }
+
 }
