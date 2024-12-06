@@ -1,9 +1,12 @@
+import java.util.List;
+
 public class Process {
 
     private String name;
     private int duration;
     private int faz, fez, saz, sez, fp, gp;
     private int[] dependencies;
+
 
     // Konstruktor
     public Process(String name, int duration, int[] dependencies) {
@@ -80,5 +83,9 @@ public class Process {
     @Override
     public String toString() {
         return "name: " + name;
+    }
+
+    public int[] getDependencies() {
+        return dependencies;
     }
 }
