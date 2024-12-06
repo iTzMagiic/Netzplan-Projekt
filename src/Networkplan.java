@@ -26,4 +26,8 @@ public class Networkplan {
         return listOfProcesses;
     }
 
+    public String getName(){
+        return name;
+    }
+
 }
