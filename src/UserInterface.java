@@ -5,8 +5,6 @@ public class UserInterface {
 
     private Scanner scanner;
     private Logic logic;
-    Networkplan networkplan = null;
-
 
 
     public UserInterface(Logic logic) {
@@ -14,93 +12,113 @@ public class UserInterface {
         this.logic = logic;
     }
 
+    public void start() {
+        System.out.println("Netzwerkplan-Manager");
+        int option = -1;
 
-    public void menu() {
-        int choice;
-        System.out.println("Hallo");
+        // Prüfen Obj in der Liste leer
+        while (option != 0) {
+            if (NetworkplanList.isListEmpty()) {
+                System.out.println("\n--- Hauptmenü ---");
+                System.out.println("--- Status: Keine Netzpläne vorhanden ---\n\nOptionen:\n");
+                System.out.print("'1' Erstellen\t\t");
+                System.out.println("'0' Beenden");
 
-        // Prüfen Ob in der Liste leer
-        if (NetworkplanList.isListEmpty()) {
+                option = readInt("Wähle eine Option: \n");
+                if (option == 1) {
+                    Networkplan networkplan = createNetworkplan();
+                    //handleSubMenu(networkplan);
+                } else if (option == 0) {
+                    System.out.println("\nProgramm beendet.");
+                } else {
+                    System.out.println("Ungültige Eingabe.");
+                }
+            } else {
+                System.out.println("\n--- Hauptmenü ---");
+                System.out.println("--- Status: Netzpläne vorhanden ---");
+                showNetworkplanList();
+                System.out.println("Wähle einen Netzplan(Nummer) oder 0 zum beenden:");
 
-            System.out.print("'1' Erstellen\t\t");
-            System.out.println("'0' Beenden");
-
-            choice = scanner.nextInt();
-
-            switch (choice) {
-                case 1:
-                    scanner.nextLine();
-                    showOptionsCreate();
-                    break;
-                case 0:
-                    System.out.println("Programm wird beendet.");
-                    break;
+                option = readInt("Deine Wahl: ");
+                if (option == 0) {
+                    System.out.println("\nProgramm beendet.");
+                } else if (option > 0 && option <= NetworkplanList.getNetworkplan().size()) {
+                    handleSubMenu(NetworkplanList.getNetworkplanChoice(option-1));
+                } else {
+                    System.out.println("Ungültige Eingabe.");
+                }
             }
-
-        } else {
-            System.out.println("'0' Beenden");
-            System.out.println("'1' Paket erstellen");
-            System.out.println("'2' Pakete verbinden");
-            System.out.println("'3' Netzplan anzeigen");
-            System.out.println("'4' Tabelle anzeigen");
-
-            choice = scanner.nextInt();
-
-            switch (choice) {
-                case 1:
-                    scanner.nextLine();
-                    break;
-                case 2:
-                    scanner.nextLine();
-                    break;
-                case 3:
-                    scanner.nextLine();
-                    break;
-                case 4:
-                    scanner.nextLine();
-                    break;
-                case 0:
-                    System.out.println("Programm wird beendet.");
-                    break;
-            }
-
-
-
         }
     }
 
+    public void showMainMenu() {
+        System.out.println("\n--- Hauptmenü ---");
+        System.out.println("1: Netzplan erstellen");
+        System.out.println("2: Netzplan auswählen");
+        System.out.println("0: Beenden");}
 
-    public void showOptionsCreate() {
-        clearConsole();
+    public Networkplan createNetworkplan() {
+        String name = readString("Gib Namen für neuen Netzplan ein: \n");
+        System.out.println("Netzplan '" + name + "' wurde erstellt.");
+        return logic.addNetworkplan(name);
+    }
 
-        String netzplanname;
+    private void handleSubMenu(Networkplan currentNetworkplan) {
+        int subOption = -1;
 
-        System.out.println("Bitte geben Sie den Netzplannamen an:");
-        System.out.println("'0' Abbrechen");
+        while (subOption != 0) {
+            System.out.println("\n\n--- Netzplan-Menü: " + currentNetworkplan.getName() + " ---");
+            System.out.print("1: Paket erstellen\t\t");
+            System.out.print("2: Netzplan ausgeben\t\t");
+            System.out.print("3: Tabelle ausgeben\t\t");
+            System.out.print("4: Netzplan wählen\t\t");
+            System.out.print("5: Netzplan erstellen\t\t");
+            System.out.print("9: Zurück\t\t");
+            System.out.println("0: Beenden\n");
 
-        netzplanname = scanner.nextLine();
-
-
-
-
-        switch (netzplanname) {
-            case "0" :
-                System.out.println("Das Erstellen wurde abgebrochen.");
-                break;
-            default:
-                Networkplan netzplan = logic.addNetworkplan(netzplanname);
-                System.out.println(netzplan.getName());
-                System.out.printf("Netzwerk %s wurde erstellt.\n", netzplanname);
+            subOption = readInt("Wähle eine Option: \n");
+            switch (subOption) {
+                case 1:
+                    System.out.println("Paket erstellen - Noch nicht implementiert.");
+                    //logic.addProcessToNetworkplan();
+                    break;
+                case 2:
+                    System.out.println("Netzplan ausgeben - Noch nicht implementiert.");
+                    break;
+                case 3:
+                    System.out.println("Tabelle ausgeben - Noch nicht implementiert.");
+                    break;
+                case 4:
+                    showNetworkplanList();
+                    break; // Zurück zur Netzplan-Auswahl
+                case 5:
+                    Networkplan networkplan = createNetworkplan();
+                    handleSubMenu(networkplan);
+                    break;
+                case 9:
+                    return; //Ebene zurück
+                case 0:
+                    System.out.println("Zurück zum Hauptmenü.");
+                    break;
+                default:
+                    System.out.println("Ungültige Eingabe.");
+            }
         }
-
-
     }
 
     public void createProcess(){
         clearConsole();
 
     }
+    public void showNetworkplanList(){
+        System.out.println("Vorhandene Netzpläne:");
 
+        int index = 1;
+        for (Networkplan networkplan : NetworkplanList.getNetworkplan()){
+            System.out.println(index + " : " + networkplan.toString());
+            index++;
+        }
+    }
 
     public void clearConsole() {
         for (int i = 0; i < 10; i++) {
@@ -108,5 +126,19 @@ public class UserInterface {
         }
     }
 
+    private int readInt(String prompt) {
+        System.out.print(prompt);
+        while (!scanner.hasNextInt()) {
+            System.out.print("Bitte eine gültige Zahl eingeben: ");
+            scanner.next();
+        }
+        return scanner.nextInt();
+    }
+
+    private String readString(String prompt) {
+        System.out.print(prompt);
+        scanner.nextLine(); // Leere Zeile lesen
+        return scanner.nextLine();
+    }
 
 }
