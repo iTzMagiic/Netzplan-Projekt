@@ -1,8 +1,9 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class NetworkplanList {
 
-    private static List<Networkplan> listOfPlan;
+    private static List<Networkplan> listOfPlan = new ArrayList<>();
 
 
     private NetworkplanList() {}

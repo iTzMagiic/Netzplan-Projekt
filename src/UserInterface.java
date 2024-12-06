@@ -72,11 +72,15 @@ public class UserInterface {
 
     public void showOptionsCreate() {
         clearConsole();
+
         String netzplanname;
+
         System.out.println("Bitte geben Sie den Netzplannamen an:");
         System.out.println("'0' Abbrechen");
 
         netzplanname = scanner.nextLine();
+
+
 
 
         switch (netzplanname) {
@@ -84,7 +88,9 @@ public class UserInterface {
                 System.out.println("Das Erstellen wurde abgebrochen.");
                 break;
             default:
-                networkplan = new Networkplan(netzplanname);
+                Networkplan netzplan = logic.addNetworkplan(netzplanname);
+                System.out.println(netzplan.getName());
+                System.out.printf("Netzwerk %s wurde erstellt.\n", netzplanname);
         }
 
 
