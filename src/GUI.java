@@ -19,7 +19,6 @@ public class GUI {
             if (NetworkplanList.isListEmpty()) {
                 cancle = createNetworkplanMenu();
                 consoleClear();
-
             } else {
                 System.out.println("Willkommen");
                 System.out.println("Was Möchten Sie machen?\n");
@@ -45,13 +44,16 @@ public class GUI {
     }
 
 
-    // Gibt ein Boolean zurück ob ein Netzplan erstellt worden ist oder ob beendet werden soll.
+    // Gibt ein Boolean zurück, ob ein Netzplan erstellt worden ist oder ob beendet werden soll.
     public boolean createNetworkplanMenu() {
         System.out.println("Willkommen");
-        System.out.println("Falls Sie das Programm beenden möchten geben Sie '0' ein.");
-        System.out.println("Bitte geben Sie den Namen des Netzplans ein: ");
-        String name = scanner.nextLine();
-
+        String name;
+        do {    // Die Schleife wiederholt sich so lange bis was Eingegeben wurde.
+            System.out.println("Falls Sie das Programm beenden möchten geben Sie '0' ein.");
+            System.out.println("Bitte geben Sie den Namen des Netzplans ein: ");
+            name = scanner.nextLine();
+            consoleClear();
+        } while (name.isEmpty());
 
         if (name.length() == 1 && name.charAt(0) == '0') {
             return true;
