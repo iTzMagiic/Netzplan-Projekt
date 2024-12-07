@@ -1,3 +1,5 @@
+import com.sun.security.jgss.GSSUtil;
+
 import java.util.*;
 
 public class GUI {
@@ -59,41 +61,44 @@ public class GUI {
             return true;
         }
 
+        // Erstellung des Netzplans
         Networkplan networkplan = logic.addNetworkplan(name);
 
         consoleClear();
         System.out.println("Netzwerkplan wurde erstellt.");
         System.out.println("Möchten Sie Knotenpunkte hinzufügen?");
-        System.out.println("'1' Ja");
-        System.out.println("'2' Nein");
+        int choice = readInt("'1' Ja? '2' Nein? : ");
 
-        int choice = scanner.nextInt();
-        scanner.nextLine();
         consoleClear();
 
         if (choice == 1) {
             createProcessMenu(networkplan);
         }
-        return true;
+        return false;
     }
 
+    // Erstellt Processe für einen Netzplan
     public void createProcessMenu(Networkplan networkplan) {
         int[] arrayWithDependencies;
+        String name;
+        int duration;
 
-        System.out.println("Bitte geben Sie den Namen des Knotenpunkts an:");
-        String name = scanner.nextLine();
+        do {            // Namen des Knotenpunkts
+            name = readString("Bitte geben Sie den Namen des Knotenpunkts an: ");
+        } while (name.isEmpty());
 
-        System.out.println("Bitte geben Sie die Dauer an:");
-        int duration = scanner.nextInt();
-        scanner.nextLine();
+        do {            // Dauer des Knotenpunkts
+            duration = readInt("Bitte geben Sie die Dauer an: ");
+        } while (duration < 1);
+        consoleClear();
 
-
-        System.out.println("Möchten Sie ein Vorgänger hinzufügen?");
-        System.out.println("'1' Ja");
-        System.out.println("'2' Nein");
-
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+        int choice;
+        do {            // Einen Vorgänger angeben
+            System.out.printf("Knotenpunkts : %s \tDauer : %d%n\n", name, duration);
+            System.out.println("Möchten Sie ein Vorgänger hinzufügen?");
+            choice = readInt("'1' Ja? '2' Nein? : ");
+            consoleClear();
+        } while (choice < 1 || choice > 2);
 
         if (choice == 1) {
             arrayWithDependencies = addDependencies();
@@ -108,28 +113,45 @@ public class GUI {
     // Gibt ein Dynamisches Array wieder mit Dependencies
     public int[] addDependencies() {
         // Liste für die Vorgänger eines Process
-        List<Integer> dependencies = new ArrayList<>();
-        int[] dependenciesArray = null;
+        List<Integer> listOfDependencies = new ArrayList<>();
+        int[] dependenciesArray;
+        int dependencie;
+        int choice;
 
         while (true) {
-            System.out.println("Bitte geben Sie den Vorgänger an:");
-            dependencies.add(scanner.nextInt());
-            scanner.nextLine();
+            do {            // Ein Vorgänger für den Process entgegennehmen
+                if (!listOfDependencies.isEmpty()) {
+                    System.out.print("Aktuelle Vorgänger: ");
+                    for (int i = 0; i < listOfDependencies.size(); i++) {
+                        System.out.printf("%d, ", listOfDependencies.get(i));
+                    }
+                    System.out.println("\n");
+                }
+                System.out.println("Zum abbrechen '0' Eingeben");
+                dependencie = readInt("Bitte geben Sie ein Vorgänger an: ");
+                consoleClear();
+            } while (dependencie < 0);
+             if (dependencie == 0) {break;} // 0 == Abbrechen
+            // Vorgänger ine eine ArrayList packen
+            listOfDependencies.add(dependencie);
 
-            System.out.println("Möchten Sie ein weiteres hinzufügen?");
-            System.out.println("'1' Ja");
-            System.out.println("'2' Nein");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
 
-            if (choice == 2) {
+            do {            // Abfrage um noch ein Vorgänger hinzuzufügen
+                System.out.println("Möchten Sie ein weiteren Vorgänger hinzufügen?");
+                choice = readInt("'1' Ja? '2' Nein? : ");
+                consoleClear();
+            } while (choice < 1 || choice > 2);
+
+
+            if (choice == 2) { // Abbruch der While-Schleife
                 break;
             }
+        }
 
-            dependenciesArray = new int[dependencies.size()];
-            for (int i = 0; i < dependencies.size(); i++) {
-                dependenciesArray[i] = dependencies.get(i);
-            }
+        // Hier wird die das Array mit der ArrayListe definiert & gefüllt
+        dependenciesArray = new int[listOfDependencies.size()];
+        for (int i = 0; i < listOfDependencies.size(); i++) {
+            dependenciesArray[i] = listOfDependencies.get(i);
         }
 
         return dependenciesArray;
