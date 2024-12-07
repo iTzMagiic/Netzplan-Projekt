@@ -1,5 +1,3 @@
-import com.sun.security.jgss.GSSUtil;
-
 import java.util.*;
 
 public class GUI {
@@ -19,19 +17,16 @@ public class GUI {
         while (!cancle) {
             System.out.println("███    ██ ███████ ████████ ███████ ██████  ██       █████  ███    ██     ███████ ██████  ███████ ████████ ███████ ██      ██      ███████ ███    ██ \n" +        "████   ██ ██         ██       ███  ██   ██ ██      ██   ██ ████   ██     ██      ██   ██ ██         ██    ██      ██      ██      ██      ████   ██ \n" +        "██ ██  ██ █████      ██      ███   ██████  ██      ███████ ██ ██  ██     █████   ██████  ███████    ██    █████   ██      ██      █████   ██ ██  ██ \n" +        "██  ██ ██ ██         ██     ███    ██      ██      ██   ██ ██  ██ ██     ██      ██   ██      ██    ██    ██      ██      ██      ██      ██  ██ ██ \n" +        "██   ████ ███████    ██    ███████ ██      ███████ ██   ██ ██   ████     ███████ ██   ██ ███████    ██    ███████ ███████ ███████ ███████ ██   ████ \n" +        "                                                                                                                                                    \n");
             if (NetworkplanList.isListEmpty()) {
-                cancle = createNetworkplanMenu();
+                cancle = createNetworkplan();
                 consoleClear();
             } else {
-                System.out.println("Willkommen");
-                System.out.println("Was Möchten Sie machen?\n");
-                System.out.println("'1' Neues Netzplan erstellen.");
-                System.out.println("'2' Netzplan Anzeigen");
-                System.out.println("'0' Beenden");
+                showMainMenu();
 
                 int choice = readInt("Bitte wählen Sie: ");
 
                 switch (choice) {
                     case 1:
+                        createNetworkplan();
                         break;
                     case 2:
                         showNetworkplanList();
@@ -45,9 +40,18 @@ public class GUI {
         System.out.println("\nDas Programm wird Beendet....");
     }
 
+    public void showMainMenu() {
+        System.out.println("Willkommen");
+        System.out.println("Was Möchten Sie machen?\n");
+        System.out.println("'1' Neues Netzplan erstellen.");
+        System.out.println("'2' Netzplan Anzeigen");
+        System.out.println("'0' Beenden");
+    }
 
+
+    // TODO:: Die Methode createNetworkplan in die Logic Klasse packen!!!
     // Gibt ein Boolean zurück, ob ein Netzplan erstellt worden ist oder ob beendet werden soll.
-    public boolean createNetworkplanMenu() {
+    public boolean createNetworkplan() {
         System.out.println("Willkommen");
         String name;
         do {    // Die Schleife wiederholt sich so lange bis was Eingegeben wurde.
@@ -134,6 +138,7 @@ public class GUI {
 
     }
 
+    //  TODO:: Die Methode addDependencies in die Logic Klasse verlagern!!
     // Gibt ein Dynamisches Array wieder mit Dependencies
     public int[] addDependencies(Networkplan networkplan) {
         // Liste für die Vorgänger eines Process
@@ -251,6 +256,7 @@ public class GUI {
 //    // Die Methode prüft, ob man überhaupt vorgänger haben kann, wenn nein dann kann man auch keine erstellen.
 //    public boolean isDependenciesExist(Networkplan networkplan) {
 //        // TODO:: Die Methode muss in die Logic Klasse und die Klasse Process braucht ein Attribut "nr"
+//              logic.isDependenciesExist() vllt den Methodennamen umbenennen
 //        //  sowie die Passenden getter und setter und in den Konstruktor.
 //        for (Process process : networkplan.getListOfProcesses()) {
 //            if (process.getNr >= 0) {
@@ -262,7 +268,7 @@ public class GUI {
 
 //    // Prüft, ob der Vorgänger auch wirklich existiert
 //    public boolean isCorrectDependencies(Networkplan networkplan, int nr) {
-//        //TODO:: Die Methode muss in die Logic Klasse
+//        //TODO:: Die Methode muss in die Logic Klasse logic.isCorrectDependencies()
 //        for (Process process : networkplan.getListOfProcesses()) {
 //            if (process.getNr() == nr) {
 //                return true;
