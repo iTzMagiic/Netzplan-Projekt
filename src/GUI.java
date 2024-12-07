@@ -122,19 +122,20 @@ public class GUI {
         } while (choice < 1 || choice > 2);
 
         if (choice == 1) {
-            arrayWithDependencies = addDependencies();
+            arrayWithDependencies = addDependencies(networkplan);
         } else {
             arrayWithDependencies = null;
         }
 
 
+        //TODO:: Wenn Proccess Neuen Konstruktor mit "nr" hat, die Erstellung des Objektes verbessern.
         Process process = new Process(name, duration, arrayWithDependencies);
         logic.addProcessToNetworkplan(networkplan, process);
 
     }
 
     // Gibt ein Dynamisches Array wieder mit Dependencies
-    public int[] addDependencies() {
+    public int[] addDependencies(Networkplan networkplan) {
         // Liste für die Vorgänger eines Process
         List<Integer> listOfDependencies = new ArrayList<>();
         int[] dependenciesArray;
@@ -153,9 +154,20 @@ public class GUI {
                 System.out.println("Zum abbrechen '0' Eingeben");
                 dependencie = readInt("Bitte geben Sie ein Vorgänger an: ");
 
-                //TODO:: Hier muss noch eine Methode hin der Prüft ob es einen so einen Vorgänger
-                // gibt ! falls nicht Fehlermeldung.
-                // Am besten bevor die Methode hier aufgerufen wird, prüfen ob es überhaupt Vorgänger gibt
+
+
+                /* TODO:: Wenn die Logic Klasse die Methode logic.isCorrectDependencies() hat dann
+                    die auskommentierte Methode aktivieren.
+                // Prüft ob ein existierender Vorgänger angegeben wurde.
+                if (dependencie != 0 && !logic.isCorrectDependencies(networkplan, dependencie)) {
+                    consoleClear();
+                    System.out.println("Bitte nur ein Existierenden Vorgänge angeben!");
+                    dependencie = -1;
+                    continue;
+                }
+                 */
+
+
 
                 if (listOfDependencies.contains(dependencie)) {
                     consoleClear();
@@ -235,6 +247,7 @@ public class GUI {
 
 
 
+
 //    // Die Methode prüft, ob man überhaupt vorgänger haben kann, wenn nein dann kann man auch keine erstellen.
 //    public boolean isDependenciesExist(Networkplan networkplan) {
 //        // TODO:: Die Methode muss in die Logic Klasse und die Klasse Process braucht ein Attribut "nr"
@@ -246,6 +259,18 @@ public class GUI {
 //        }
 //        return false;
 //    }
+
+//    // Prüft, ob der Vorgänger auch wirklich existiert
+//    public boolean isCorrectDependencies(Networkplan networkplan, int nr) {
+//        //TODO:: Die Methode muss in die Logic Klasse
+//        for (Process process : networkplan.getListOfProcesses()) {
+//            if (process.getNr() == nr) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+
 
 
 
