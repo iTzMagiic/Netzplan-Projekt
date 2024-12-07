@@ -49,7 +49,7 @@ public class GUI {
     }
 
 
-    // TODO:: Die Methode createNetworkplan in die Logic Klasse packen!!!
+    // TODO:: Die Methode createNetworkplan evtl in die Logic Klasse packen
     // Gibt ein Boolean zurück, ob ein Netzplan erstellt worden ist oder ob beendet werden soll.
     public boolean createNetworkplan() {
         System.out.println("Willkommen");
@@ -229,25 +229,32 @@ public class GUI {
 
             int choice = readInt("Bitte wählen Sie ein Netzplan aus falls Sie möchten: ");
 
-            if (choice != 0) {
+            if (choice == 0) {
+                cancle = true;
+            } else if (choice <= NetworkplanList.getNetworkplan().size() && choice >= 0) {
                 consoleClear();
                 choice--;
-                System.out.println(NetworkplanList.getNetworkplan().get(choice).toString());
-                System.out.println("Möchten Sie noch ein anderes Netzplan Anschauen?");
-                System.out.println("'1' Ja");
-                System.out.println("'2' Nein");
-
-                choice = readInt("Bitte Auswahl angeben: ");
-
-                if (choice == 1) {
-                    consoleClear();
-                    continue;
+                if(!isSelectingNetworkplan(choice)) {
+                    cancle = true;
                 }
             }
             consoleClear();
-            cancle = true;
         }
     }
+
+     public boolean isSelectingNetworkplan(int choice) {
+         do {
+             System.out.println(NetworkplanList.getNetworkplan().get(choice).toString());
+             System.out.println("Möchten Sie noch ein anderes Netzplan Anschauen?");
+             choice = readInt("'1' Ja? '2' Nein? : ");
+             if (choice == 1) {
+                 consoleClear();
+                 return true;
+             }
+         } while (choice != 2);
+         return false;
+     }
+
 
 
 
