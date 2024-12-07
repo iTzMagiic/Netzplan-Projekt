@@ -15,9 +15,11 @@ public class GUI {
         boolean cancle = false;
 
         while (!cancle) {
+            System.out.println("███    ██ ███████ ████████ ███████ ██████  ██       █████  ███    ██     ███████ ██████  ███████ ████████ ███████ ██      ██      ███████ ███    ██ \n" +        "████   ██ ██         ██       ███  ██   ██ ██      ██   ██ ████   ██     ██      ██   ██ ██         ██    ██      ██      ██      ██      ████   ██ \n" +        "██ ██  ██ █████      ██      ███   ██████  ██      ███████ ██ ██  ██     █████   ██████  ███████    ██    █████   ██      ██      █████   ██ ██  ██ \n" +        "██  ██ ██ ██         ██     ███    ██      ██      ██   ██ ██  ██ ██     ██      ██   ██      ██    ██    ██      ██      ██      ██      ██  ██ ██ \n" +        "██   ████ ███████    ██    ███████ ██      ███████ ██   ██ ██   ████     ███████ ██   ██ ███████    ██    ███████ ███████ ███████ ███████ ██   ████ \n" +        "                                                                                                                                                    \n");
             if (NetworkplanList.isListEmpty()) {
-                createNetworkplanMenu();
+                cancle = createNetworkplanMenu();
                 consoleClear();
+
             } else {
                 System.out.println("Willkommen");
                 System.out.println("Was Möchten Sie machen?\n");
@@ -39,15 +41,21 @@ public class GUI {
                 }
             }
         }
-
-
+        System.out.println("\nDas Programm wird Beendet....");
     }
 
 
-    public void createNetworkplanMenu() {
+    // Gibt ein Boolean zurück ob ein Netzplan erstellt worden ist oder ob beendet werden soll.
+    public boolean createNetworkplanMenu() {
         System.out.println("Willkommen");
-        System.out.println("Bitte geben Sie den Namen des Netzplans ein:");
+        System.out.println("Falls Sie das Programm beenden möchten geben Sie '0' ein.");
+        System.out.println("Bitte geben Sie den Namen des Netzplans ein: ");
         String name = scanner.nextLine();
+
+
+        if (name.length() == 1 && name.charAt(0) == '0') {
+            return true;
+        }
 
         Networkplan networkplan = logic.addNetworkplan(name);
 
@@ -64,6 +72,7 @@ public class GUI {
         if (choice == 1) {
             createProcessMenu(networkplan);
         }
+        return true;
     }
 
     public void createProcessMenu(Networkplan networkplan) {
