@@ -275,6 +275,7 @@ public class GUI {
                      continue;
                  case 4:
                      deleteProcess(NetworkplanList.getNetworkplan().get(choice));
+                     continue;
                  case 5:
                      consoleClear();
                      return true;
@@ -297,19 +298,23 @@ public class GUI {
                 System.out.println("- " + process.getName());
             }
 
-            toDeleteProcess = readString("Geben Sie den Namen des zu löschenden Knotenpunkts ein: ");
+            toDeleteProcess = readString("\nGeben Sie den Namen des zu löschenden Knotenpunkts ein ('0' zum Abbrechen): ");
+
 
             // Versuchen, den Prozess zu löschen
             String finalToDeleteProcess = toDeleteProcess;
             isDeleted = networkplan.getListOfProcesses().removeIf(process -> process.getName().equals(finalToDeleteProcess));
 
             if (isDeleted) {
-                System.out.println("Der Knotenpunkt '" + toDeleteProcess + "' wurde erfolgreich gelöscht.");
-            } else {
-                System.out.println("Der eingegebene Knotenpunkt '" + toDeleteProcess + "' wurde nicht gefunden.");
+                System.out.println("Der Knotenpunkt '" + toDeleteProcess + "' wurde erfolgreich gelöscht.\n");
+            } else if (toDeleteProcess.length() == 1 && toDeleteProcess.charAt(0) == '0') {
+                break;
+            }else {
+                System.out.println("Der eingegebene Knotenpunkt '" + toDeleteProcess + "' wurde nicht gefunden.\n");
             }
 
         } while (askYesOrNo("Möchten Sie einen weiteren Knoten löschen?"));
+        consoleClear();
     }
 
 
