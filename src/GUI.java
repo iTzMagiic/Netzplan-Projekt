@@ -70,33 +70,31 @@ public class GUI {
 
         consoleClear();
         System.out.println("Netzwerkplan wurde erstellt.");
-        System.out.println("Möchten Sie Knotenpunkte hinzufügen?");
-        int choice = readInt("'1' Ja? '2' Nein? : ");
 
-        consoleClear();
-
-        if (choice == 1) {
-            createProcessMenu(networkplan);
+        if (askYesOrNo("Möchten Sie Knotenpunkte hinzufügen?")) {
+            createProcess(networkplan);
         }
         return false;
     }
 
     // Erstellt Processe für einen Netzplan
-    public void createProcessMenu(Networkplan networkplan) {
+    public void createProcess(Networkplan networkplan) {
         int[] arrayWithDependencies;
         String name;
         int duration;
 
-        do {            // Namen des Knotenpunkts
-            name = readString("Bitte geben Sie den Namen des Knotenpunkts an: ");
-        } while (name.isEmpty());
+        do {
+            consoleClear();
+            do {            // Namen des Knotenpunkts
+                name = readString("Bitte geben Sie den Namen des Knotenpunkts an: ");
+            } while (name.isEmpty());
 
-        do {            // Dauer des Knotenpunkts
-            duration = readInt("Bitte geben Sie die Dauer an: ");
-        } while (duration < 1);
-        consoleClear();
+            do {            // Dauer des Knotenpunkts
+                duration = readInt("Bitte geben Sie die Dauer an: ");
+            } while (duration < 1);
+            consoleClear();
 
-        int choice;
+            int choice;
 
         /*
         if (logic.isDependenciesExist()) {
@@ -116,26 +114,27 @@ public class GUI {
             arrayWithDependencies = null;
         }
          */
-        //TODO:: Wenn logic.isDependenciesExist() in Logic existiert dann die Untere
-        // Methode gegen die obere auskommentierte tauschen
-        do {            // Einen Vorgänger angeben
-            System.out.printf("Knotenpunkts : %s \tDauer : %d%n\n", name, duration);
-            System.out.println("Möchten Sie ein Vorgänger hinzufügen?");
-            choice = readInt("'1' Ja? '2' Nein? : ");
-            consoleClear();
-        } while (choice < 1 || choice > 2);
+            //TODO:: Wenn logic.isDependenciesExist() in Logic existiert dann die Untere
+            // Methode gegen die obere auskommentierte tauschen
+            do {            // Einen Vorgänger angeben
+                System.out.printf("Knotenpunkt : %s \tDauer : %d%n\n", name, duration);
+                System.out.println("Möchten Sie ein Vorgänger hinzufügen?");
+                choice = readInt("'1' Ja? '2' Nein? : ");
+                consoleClear();
+            } while (choice < 1 || choice > 2);
 
-        if (choice == 1) {
-            arrayWithDependencies = addDependencies(networkplan);
-        } else {
-            arrayWithDependencies = null;
-        }
+            if (choice == 1) {
+                arrayWithDependencies = addDependencies(networkplan);
+            } else {
+                arrayWithDependencies = null;
+            }
 
 
-        //TODO:: Wenn Proccess Neuen Konstruktor mit "nr" hat, die Erstellung des Objektes verbessern.
-        Process process = new Process(name, duration, arrayWithDependencies);
-        logic.addProcessToNetworkplan(networkplan, process);
-
+            //TODO:: Wenn Proccess Neuen Konstruktor mit "nr" hat, die Erstellung des Objektes verbessern.
+            Process process = new Process(name, duration, arrayWithDependencies);
+            logic.addProcessToNetworkplan(networkplan, process);
+        } while (askYesOrNo("Möchten Sie noch ein Knotenpunkt hinzufügen?"));
+        consoleClear();
     }
 
     //  TODO:: Die Methode addDependencies in die Logic Klasse verlagern!!
@@ -243,17 +242,95 @@ public class GUI {
     }
 
      public boolean isSelectingNetworkplan(int choice) {
+        int option = -1;
          do {
-             System.out.println(NetworkplanList.getNetworkplan().get(choice).toString());
-             System.out.println("Möchten Sie noch ein anderes Netzplan Anschauen?");
-             choice = readInt("'1' Ja? '2' Nein? : ");
-             if (choice == 1) {
-                 consoleClear();
-                 return true;
+             System.out.println("Ausgewählter Netzplan : " + NetworkplanList.getNetworkplan().get(choice).toString() + "\n\n");
+             System.out.println("'1' Netzplan ausgeben");
+             System.out.println("'2' Tabelle ausgeben");
+             System.out.println("'3' Neuen Knoten hinzufügen");
+             System.out.println("'4' Knoten löschen");
+             System.out.println("'5' Anderen Netzplan wählen");
+             System.out.println("'0' Abbrechen");
+             option = readInt("Eingabe : ");
+
+             switch (option) {
+                 case 1:
+                     showNetworkplan(NetworkplanList.getNetworkplan().get(choice));
+                     continue;
+                 case 2:
+                     showNetworkplanTable(NetworkplanList.getNetworkplan().get(choice));
+                     continue;
+                 case 3:
+                     createProcess(NetworkplanList.getNetworkplan().get(choice));
+                     continue;
+                 case 4:
+                     deleteProcess(NetworkplanList.getNetworkplan().get(choice));
+                 case 5:
+                     consoleClear();
+                     return true;
              }
-         } while (choice != 2);
+             consoleClear();
+         } while (option != 0);
+         consoleClear();
          return false;
      }
+
+    public void deleteProcess(Networkplan networkplan) {
+        String toDeleteProcess;
+        boolean isDeleted;
+
+        do {
+            consoleClear();
+            System.out.println("Ausgewählter Netzplan: " + networkplan.getName());
+            System.out.println("Verfügbare Knotenpunkte:");
+            for (Process process : networkplan.getListOfProcesses()) {
+                System.out.println("- " + process.getName());
+            }
+
+            toDeleteProcess = readString("Geben Sie den Namen des zu löschenden Knotenpunkts ein: ");
+
+            // Versuchen, den Prozess zu löschen
+            String finalToDeleteProcess = toDeleteProcess;
+            isDeleted = networkplan.getListOfProcesses().removeIf(process -> process.getName().equals(finalToDeleteProcess));
+
+            if (isDeleted) {
+                System.out.println("Der Knotenpunkt '" + toDeleteProcess + "' wurde erfolgreich gelöscht.");
+            } else {
+                System.out.println("Der eingegebene Knotenpunkt '" + toDeleteProcess + "' wurde nicht gefunden.");
+            }
+
+        } while (askYesOrNo("Möchten Sie einen weiteren Knoten löschen?"));
+    }
+
+
+
+    public void showNetworkplanTable(Networkplan networkplan) {
+        do {
+            consoleClear();
+            System.out.println("Ausgewählter Netzplan : " + networkplan.toString());
+            System.out.println("AP-Nr\tAP-Beschreibung\t\tVorgänger\tDauer");
+            for (Process process : networkplan.getListOfProcesses()) {
+                System.out.printf("%d\t\t%S\t\t%S\t%d\n", 1, process.getName(), Arrays.toString(process.getDependencies()), process.getDuration());
+
+            }
+        } while (readInt("'0' Zurück : ") != 0);
+        consoleClear();
+     }
+
+
+     public void showNetworkplan(Networkplan networkplan) {
+         do {
+             consoleClear();
+             System.out.println("Ausgewählter Netzplan : " + networkplan.toString() + "\n\n");
+             if (networkplan.getListOfProcesses() != null) {
+                 for (Process process : networkplan.getListOfProcesses()) {
+                     System.out.println(process.toString());
+                 }
+             }
+         } while (readInt("'0' Zurück : ") != 0);
+         consoleClear();
+     }
+
 
 
 
@@ -310,6 +387,15 @@ public class GUI {
             System.out.println();
         }
     }
+
+    private boolean askYesOrNo(String message) {
+        int choice;
+        do {
+            choice = readInt(message + " ('1' Ja, '2' Nein): ");
+        } while (choice < 1 || choice > 2);
+        return choice == 1;
+    }
+
 
 
 
