@@ -86,13 +86,24 @@ public class GUI {
         do {
             consoleClear();
             do {            // Namen des Knotenpunkts
-                name = readString("Bitte geben Sie den Namen des Knotenpunkts an: ");
+                name = readString("Bitte geben Sie den Namen des Knotenpunkts an ('0' zum Abbrechen): ");
             } while (name.isEmpty());
 
+            if (name.length() == 1 && name.charAt(0) == '0') { // Abbruch
+                break;
+            }
+
+
             do {            // Dauer des Knotenpunkts
-                duration = readInt("Bitte geben Sie die Dauer an: ");
-            } while (duration < 1);
+                consoleClear();
+                System.out.printf("Knotenpunkt : %S\n\n", name);
+                duration = readInt("Bitte geben Sie die Dauer an ('0' zum Abbrechen): ");
+            } while (duration < 0);
             consoleClear();
+
+            if (duration == 0) {
+                break;
+            }
 
             int choice;
 
@@ -117,7 +128,7 @@ public class GUI {
             //TODO:: Wenn logic.isDependenciesExist() in Logic existiert dann die Untere
             // Methode gegen die obere auskommentierte tauschen
             do {            // Einen Vorgänger angeben
-                System.out.printf("Knotenpunkt : %s \tDauer : %d%n\n", name, duration);
+                System.out.printf("Knotenpunkt : %S \tDauer : %d\n", name, duration);
                 System.out.println("Möchten Sie ein Vorgänger hinzufügen?");
                 choice = readInt("'1' Ja? '2' Nein? : ");
                 consoleClear();
@@ -155,8 +166,7 @@ public class GUI {
                     }
                     System.out.println("\n");
                 }
-                System.out.println("Zum abbrechen '0' Eingeben");
-                dependencie = readInt("Bitte geben Sie ein Vorgänger an: ");
+                dependencie = readInt("Bitte geben Sie ein Vorgänger an ('0' zum Abbrechen): ");
 
 
 
@@ -242,7 +252,7 @@ public class GUI {
     }
 
      public boolean isSelectingNetworkplan(int choice) {
-        int option = -1;
+        int option;
          do {
              System.out.println("Ausgewählter Netzplan : " + NetworkplanList.getNetworkplan().get(choice).toString() + "\n\n");
              System.out.println("'1' Netzplan ausgeben");
@@ -265,6 +275,7 @@ public class GUI {
                      continue;
                  case 4:
                      deleteProcess(NetworkplanList.getNetworkplan().get(choice));
+                     continue;
                  case 5:
                      consoleClear();
                      return true;
@@ -287,19 +298,23 @@ public class GUI {
                 System.out.println("- " + process.getName());
             }
 
-            toDeleteProcess = readString("Geben Sie den Namen des zu löschenden Knotenpunkts ein: ");
+            toDeleteProcess = readString("\nGeben Sie den Namen des zu löschenden Knotenpunkts ein ('0' zum Abbrechen): ");
+
 
             // Versuchen, den Prozess zu löschen
             String finalToDeleteProcess = toDeleteProcess;
             isDeleted = networkplan.getListOfProcesses().removeIf(process -> process.getName().equals(finalToDeleteProcess));
 
             if (isDeleted) {
-                System.out.println("Der Knotenpunkt '" + toDeleteProcess + "' wurde erfolgreich gelöscht.");
-            } else {
-                System.out.println("Der eingegebene Knotenpunkt '" + toDeleteProcess + "' wurde nicht gefunden.");
+                System.out.println("Der Knotenpunkt '" + toDeleteProcess + "' wurde erfolgreich gelöscht.\n");
+            } else if (toDeleteProcess.length() == 1 && toDeleteProcess.charAt(0) == '0') {
+                break;
+            }else {
+                System.out.println("Der eingegebene Knotenpunkt '" + toDeleteProcess + "' wurde nicht gefunden.\n");
             }
 
         } while (askYesOrNo("Möchten Sie einen weiteren Knoten löschen?"));
+        consoleClear();
     }
 
 
@@ -321,11 +336,13 @@ public class GUI {
      public void showNetworkplan(Networkplan networkplan) {
          do {
              consoleClear();
-             System.out.println("Ausgewählter Netzplan : " + networkplan.toString() + "\n\n");
-             if (networkplan.getListOfProcesses() != null) {
+             System.out.println("Ausgewählter Netzplan : " + networkplan.toString() + "\n");
+             if (!networkplan.getListOfProcesses().isEmpty()) {
                  for (Process process : networkplan.getListOfProcesses()) {
                      System.out.println(process.toString());
                  }
+             } else {
+                 System.out.println("Netzplan ist Leer.");
              }
          } while (readInt("'0' Zurück : ") != 0);
          consoleClear();
