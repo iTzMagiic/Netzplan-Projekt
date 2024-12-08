@@ -70,10 +70,8 @@ public class GUI {
 
         consoleClear();
         System.out.println("Netzwerkplan wurde erstellt.");
-        System.out.println("Möchten Sie Knotenpunkte hinzufügen?");
-        int choice = readInt("'1' Ja? '2' Nein? : ");
 
-        if (choice == 1) {
+        if (askYesOrNo("Möchten Sie Knotenpunkte hinzufügen?")) {
             createProcess(networkplan);
         }
         return false;
@@ -135,7 +133,7 @@ public class GUI {
             //TODO:: Wenn Proccess Neuen Konstruktor mit "nr" hat, die Erstellung des Objektes verbessern.
             Process process = new Process(name, duration, arrayWithDependencies);
             logic.addProcessToNetworkplan(networkplan, process);
-        } while (readInt("Möchten Sie noch ein Knotenpunkt hinzufügen? ('1' Ja? '2' Nein?) : ") != 2);
+        } while (askYesOrNo("Möchten Sie noch ein Knotenpunkt hinzufügen?"));
         consoleClear();
     }
 
@@ -266,6 +264,7 @@ public class GUI {
                      createProcess(NetworkplanList.getNetworkplan().get(choice));
                      continue;
                  case 4:
+                     deleteProcess(NetworkplanList.getNetworkplan().get(choice));
                  case 5:
                      consoleClear();
                      return true;
@@ -276,14 +275,36 @@ public class GUI {
          return false;
      }
 
-     public void deleteProcess(Networkplan networkplan) {
+    public void deleteProcess(Networkplan networkplan) {
+        String toDeleteProcess;
+        boolean isDeleted;
+
         do {
-            System.out.println("Ausgewählter Netzplan : " + networkplan.toString());
-        } while (true);
-     }
+            consoleClear();
+            System.out.println("Ausgewählter Netzplan: " + networkplan.getName());
+            System.out.println("Verfügbare Knotenpunkte:");
+            for (Process process : networkplan.getListOfProcesses()) {
+                System.out.println("- " + process.getName());
+            }
+
+            toDeleteProcess = readString("Geben Sie den Namen des zu löschenden Knotenpunkts ein: ");
+
+            // Versuchen, den Prozess zu löschen
+            String finalToDeleteProcess = toDeleteProcess;
+            isDeleted = networkplan.getListOfProcesses().removeIf(process -> process.getName().equals(finalToDeleteProcess));
+
+            if (isDeleted) {
+                System.out.println("Der Knotenpunkt '" + toDeleteProcess + "' wurde erfolgreich gelöscht.");
+            } else {
+                System.out.println("Der eingegebene Knotenpunkt '" + toDeleteProcess + "' wurde nicht gefunden.");
+            }
+
+        } while (askYesOrNo("Möchten Sie einen weiteren Knoten löschen?"));
+    }
 
 
-     public void showNetworkplanTable(Networkplan networkplan) {
+
+    public void showNetworkplanTable(Networkplan networkplan) {
         do {
             consoleClear();
             System.out.println("Ausgewählter Netzplan : " + networkplan.toString());
@@ -366,6 +387,15 @@ public class GUI {
             System.out.println();
         }
     }
+
+    private boolean askYesOrNo(String message) {
+        int choice;
+        do {
+            choice = readInt(message + " ('1' Ja, '2' Nein): ");
+        } while (choice < 1 || choice > 2);
+        return choice == 1;
+    }
+
 
 
 
