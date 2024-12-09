@@ -23,9 +23,9 @@ public class Networkplan {
         return processCounter;
     }
 
-    public void deleteOneProcess() {
-        processCounter--;
-    }
+//    public void deleteOneProcess() {
+//        processCounter--;
+//    }
 
 
     // Fügt der Liste ein neuen vorgang hinzu

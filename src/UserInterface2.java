@@ -133,111 +133,40 @@ public class UserInterface2 {
     }
 
 
-//    //  TODO:: Die Methode addDependencies in die Logic Klasse verlagern!!
-//    // Gibt ein Dynamisches Array wieder mit Dependencies
-//    public int[] addDependencies(Networkplan networkplan, int ownNr) {
-//        // Liste für die Vorgänger eines Process
-//        List<Integer> listOfDependencies = new ArrayList<>();
-//        int[] dependenciesArray;
-//        int dependencie;
-//        int choice;
-//
-//        while (true) {
-//            do {            // Ein Vorgänger für den Process entgegennehmen
-//                if (!listOfDependencies.isEmpty()) { // Gibt die Aktuellen Vorgänger wieder als übersicht
-//                    System.out.print("Aktuelle Vorgänger: ");
-//                    for (int i = 0; i < listOfDependencies.size(); i++) {
-//                        System.out.printf("%d, ", listOfDependencies.get(i));
-//                    }
-//                    System.out.println("\n");
-//                }
-//                dependencie = readInt("Bitte geben Sie ein Vorgänger an ('0' zum Abbrechen): ");
-//
-//
-//                // Prüft ob ein existierender Vorgänger angegeben wurde und nicht er selbst
-//                if (dependencie != 0 && !logic.isCorrectDependencies(networkplan, dependencie) && ownNr != dependencie) {
-//                    consoleClear();
-//                    System.out.println("Bitte nur ein Existierenden Vorgänge angeben!");
-//                    dependencie = -1;
-//                    continue;
-//                }
-//
-//
-//                // Prüft, ob er die gleichen Vorgänger angibt
-//                if (listOfDependencies.contains(dependencie)) {
-//                    consoleClear();
-//                    System.out.println("Bitte nicht den gleichen Vorgänger angeben!");
-//                    dependencie = -1;   // damit die Schleife wiederholt wird
-//                    continue;
-//                }
-//                consoleClear();
-//            } while (dependencie < 0);
-//
-//            if (dependencie == 0) {break;} // 0 == Abbrechen
-//
-//            // Vorgänger in ein ArrayList packen
-//            listOfDependencies.add(dependencie);
-//
-//
-//            do {            // Abfrage um noch ein Vorgänger hinzuzufügen
-//                System.out.println("Möchten Sie ein weiteren Vorgänger hinzufügen?");
-//                choice = readInt("'1' Ja? '2' Nein? : ");
-//                consoleClear();
-//            } while (choice < 1 || choice > 2);
-//
-//
-//            if (choice == 2) { // Abbruch der While-Schleife
-//                break;
-//            }
-//        }
-//
-//        // Hier wird die das Array mit der ArrayListe definiert & gefüllt
-//        dependenciesArray = new int[listOfDependencies.size()];
-//        for (int i = 0; i < listOfDependencies.size(); i++) {
-//            dependenciesArray[i] = listOfDependencies.get(i);
-//        }
-//
-//        return dependenciesArray;
-//    }
-
     //  TODO:: Die Methode addDependencies in die Logic Klasse verlagern!!
-    // Gibt ein Dynamisches Array wieder mit Dependencies
-    public void addDependencies(Networkplan networkplan, Process process) {
-        // Liste für die Vorgänger eines Process
-        List<Integer> listOfDependencies = new ArrayList<>();
-        int[] dependenciesArray;
-        int dependencie;
-        int choice;
-        int ownNr = process.getNr();
-        System.out.println(ownNr);
+                // Gibt ein Dynamisches Array wieder mit Dependencies
+                public void addDependencies(Networkplan networkplan, Process process) {
+                    ArrayList<Integer> listOfDependencies = new ArrayList<>(); // Liste für die Angegebenen Vorgänger
+                    int dependencie;
+                    int ownNr = process.getNr();
 
-        while (true) {
-            do {            // Ein Vorgänger für den Process entgegennehmen
-                if (!listOfDependencies.isEmpty()) { // Gibt die Aktuellen Vorgänger wieder als übersicht
-                    System.out.print("Aktuelle Vorgänger: ");
-                    for (int i = 0; i < listOfDependencies.size(); i++) {
-                        System.out.printf("%d, ", listOfDependencies.get(i));
-                    }
-                    System.out.println("\n");
-                }
-                //TODO:: Eine Liste aller möglichen Vorgänger hier angeben im Sysout
-                dependencie = readInt("Bitte geben Sie ein Vorgänger an ('0' zum Abbrechen): ");
+                    do{
+                        do {            // Ein Vorgänger für den Process entgegennehmen
+                            if (!listOfDependencies.isEmpty()) { // Gibt die Aktuellen Vorgänger wieder als übersicht
+                                System.out.print("Aktuelle Vorgänger: ");
+                                for (int i = 0; i < listOfDependencies.size(); i++) {
+                                    System.out.printf("%d, ", listOfDependencies.get(i));
+                                }
+                                System.out.println("\n");
+                            }
+                            //TODO:: Eine Liste aller möglichen Vorgänger hier angeben im Sysout
+                            dependencie = readInt("Bitte geben Sie ein Vorgänger an ('0' zum Abbrechen): ");
 
 
-                if (dependencie == ownNr) {
-                    consoleClear();
-                    System.out.println("Bitte nicht den eigenen Knoten angeben!");
-                    dependencie = -1;
-                    continue;
-                }
+                            if (dependencie == ownNr) {
+                                consoleClear();
+                                System.out.println("Bitte nicht den eigenen Knoten angeben!");
+                                dependencie = -1;
+                                continue;
+                            }
 
-                // Prüft ob ein existierender Vorgänger angegeben wurde und nicht er selbst
-                if (dependencie != 0 && !logic.isCorrectDependencies(networkplan, dependencie)) {
-                    consoleClear();
-                    System.out.println("Bitte nur ein Existierenden Vorgänge angeben!");
-                    dependencie = -1;
-                    continue;
-                }
+                            // Prüft, ob ein existierender Vorgänger angegeben wurde und nicht er selbst
+                            if (dependencie != 0 && !logic.isCorrectDependencies(networkplan, dependencie)) {
+                                consoleClear();
+                                System.out.println("Bitte nur ein Existierenden Vorgänge angeben!");
+                                dependencie = -1;
+                                continue;
+                            }
 
 
                 // Prüft, ob er die gleichen Vorgänger angibt
@@ -255,26 +184,15 @@ public class UserInterface2 {
             // Vorgänger in ein ArrayList packen
             listOfDependencies.add(dependencie);
 
+            consoleClear();
 
-            do {            // Abfrage um noch ein Vorgänger hinzuzufügen
-                System.out.println("Möchten Sie ein weiteren Vorgänger hinzufügen?");
-                choice = readInt("'1' Ja? '2' Nein? : ");
-                consoleClear();
-            } while (choice < 1 || choice > 2);
+        } while (askYesOrNo("Möchten Sie ein weiteren Vorgänger hinzufügen?"));
 
+        process.setDependencies(logic.getDependenciesArray(listOfDependencies));
 
-            if (choice == 2) { // Abbruch der While-Schleife
-                break;
-            }
-        }
-
-        // Hier wird die das Array mit der ArrayListe definiert & gefüllt
-        dependenciesArray = new int[listOfDependencies.size()];
-        for (int i = 0; i < listOfDependencies.size(); i++) {
-            dependenciesArray[i] = listOfDependencies.get(i);
-        }
-        process.setDependencies(dependenciesArray);
     }
+
+
 
 
     // Zeigt alle Vorhandenen Netzpläne an
@@ -317,7 +235,7 @@ public class UserInterface2 {
             System.out.println("'1' Netzplan ausgeben");
             System.out.println("'2' Tabelle ausgeben");
             System.out.println("'3' Neuen Knoten hinzufügen");
-            System.out.println("'4' Knoten löschen");
+            System.out.println("'4' Knoten Bearbeiten");
             System.out.println("'5' Anderen Netzplan wählen");
             System.out.println("'0' Abbrechen");
             option = readInt("Eingabe : ");
@@ -333,7 +251,8 @@ public class UserInterface2 {
                     createProcess(NetworkplanList.getNetworkplan().get(choice));
                     continue;
                 case 4:
-                    deleteProcess(NetworkplanList.getNetworkplan().get(choice));
+                    //TODO:: Knoten bearbeiten Methode und auch addDependencies()
+                    //deleteProcess(NetworkplanList.getNetworkplan().get(choice));
                     continue;
                 case 5:
                     consoleClear();

@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Logic {
 
 
@@ -37,5 +39,14 @@ public class Logic {
             }
         }
         return false;
+    }
+
+    // Hier wird ein Array aus ArrayList erstellt und zurückgegeben
+    public int[] getDependenciesArray(ArrayList<Integer> listOfDependencies) {
+        int[] dependenciesArray = new int[listOfDependencies.size()];
+        for (int i = 0; i < listOfDependencies.size(); i++) {
+            dependenciesArray[i] = listOfDependencies.get(i);
+        }
+        return dependenciesArray;
     }
 }
