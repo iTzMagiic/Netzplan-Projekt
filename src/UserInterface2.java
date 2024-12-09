@@ -133,40 +133,47 @@ public class UserInterface2 {
     }
 
 
+
     //  TODO:: Die Methode addDependencies in die Logic Klasse verlagern!!
-                // Gibt ein Dynamisches Array wieder mit Dependencies
-                public void addDependencies(Networkplan networkplan, Process process) {
-                    ArrayList<Integer> listOfDependencies = new ArrayList<>(); // Liste für die Angegebenen Vorgänger
-                    int dependencie;
-                    int ownNr = process.getNr();
+    // Gibt ein Dynamisches Array wieder mit Dependencies
+    public void addDependencies(Networkplan networkplan, Process process) {
+        ArrayList<Integer> listOfDependencies = new ArrayList<>(); // Liste für die Angegebenen Vorgänger
+        int dependencie;
+        int ownNr = process.getNr();
 
-                    do{
-                        do {            // Ein Vorgänger für den Process entgegennehmen
-                            if (!listOfDependencies.isEmpty()) { // Gibt die Aktuellen Vorgänger wieder als übersicht
-                                System.out.print("Aktuelle Vorgänger: ");
-                                for (int i = 0; i < listOfDependencies.size(); i++) {
-                                    System.out.printf("%d, ", listOfDependencies.get(i));
-                                }
-                                System.out.println("\n");
-                            }
-                            //TODO:: Eine Liste aller möglichen Vorgänger hier angeben im Sysout
-                            dependencie = readInt("Bitte geben Sie ein Vorgänger an ('0' zum Abbrechen): ");
+        do{
+            do {            // Ein Vorgänger für den Process entgegennehmen
+                if (!listOfDependencies.isEmpty()) { // Gibt die Aktuellen Vorgänger wieder als übersicht
+                    System.out.print("Aktuelle Vorgänger: ");
+                    for (int i = 0; i < listOfDependencies.size(); i++) {
+                        System.out.printf("%d, ", listOfDependencies.get(i));
+                    }
+                    System.out.println("\n");
+                }
+                //TODO:: Eine Liste aller möglichen Vorgänger hier angeben im Sysout
+                dependencie = readInt("Bitte geben Sie ein Vorgänger an ('0' zum Abbrechen): ");
 
 
-                            if (dependencie == ownNr) {
-                                consoleClear();
-                                System.out.println("Bitte nicht den eigenen Knoten angeben!");
-                                dependencie = -1;
-                                continue;
-                            }
+                if (dependencie == ownNr) {
+                    consoleClear();
+                    System.out.println("Bitte nicht den eigenen Knoten angeben!");
+                    dependencie = -1;
+                    continue;
+                }
 
-                            // Prüft, ob ein existierender Vorgänger angegeben wurde und nicht er selbst
-                            if (dependencie != 0 && !logic.isCorrectDependencies(networkplan, dependencie)) {
-                                consoleClear();
-                                System.out.println("Bitte nur ein Existierenden Vorgänge angeben!");
-                                dependencie = -1;
-                                continue;
-                            }
+                if (dependencie > ownNr) {
+                    consoleClear();
+                    System.out.println("Nur Vorgänger keine Nachfolger!");
+                    continue;
+                }
+
+                // Prüft, ob ein existierender Vorgänger angegeben wurde und nicht er selbst
+                if (dependencie != 0 && !logic.isCorrectDependencies(networkplan, dependencie)) {
+                    consoleClear();
+                    System.out.println("Bitte nur ein Existierenden Vorgänge angeben!");
+                    dependencie = -1;
+                    continue;
+                }
 
 
                 // Prüft, ob er die gleichen Vorgänger angibt
@@ -230,29 +237,31 @@ public class UserInterface2 {
 
     public boolean isSelectingNetworkplan(int choice) {
         int option;
+        Networkplan networkplan = NetworkplanList.getNetworkplan().get(choice);
         do {
-            System.out.println("Ausgewählter Netzplan : " + NetworkplanList.getNetworkplan().get(choice).toString() + "\n\n");
+            System.out.println("Ausgewählter Netzplan : " + networkplan.toString() + "\n\n");
             System.out.println("'1' Netzplan ausgeben");
             System.out.println("'2' Tabelle ausgeben");
             System.out.println("'3' Neuen Knoten hinzufügen");
-            System.out.println("'4' Knoten Bearbeiten");
+            System.out.println("'4' Knoten Anzeigen/-Bearbeiten");
             System.out.println("'5' Anderen Netzplan wählen");
             System.out.println("'0' Abbrechen");
             option = readInt("Eingabe : ");
 
             switch (option) {
                 case 1:
-                    showNetworkplan(NetworkplanList.getNetworkplan().get(choice));
+                    showNetworkplan(networkplan);
                     continue;
                 case 2:
-                    showNetworkplanTable(NetworkplanList.getNetworkplan().get(choice));
+                    showNetworkplanTable(networkplan);
                     continue;
                 case 3:
-                    createProcess(NetworkplanList.getNetworkplan().get(choice));
+                    createProcess(networkplan);
                     continue;
                 case 4:
                     //TODO:: Knoten bearbeiten Methode und auch addDependencies()
-                    //deleteProcess(NetworkplanList.getNetworkplan().get(choice));
+                    //deleteProcess(networkplan);
+                    showProcessesFromNetworkplan(networkplan);
                     continue;
                 case 5:
                     consoleClear();
@@ -264,36 +273,108 @@ public class UserInterface2 {
         return false;
     }
 
-    public void deleteProcess(Networkplan networkplan) {
-        String toDeleteProcess;
-        boolean isDeleted;
-
+    //TODO:: Fast die Selbe Methode wie ShowNetworkplanTable muss man ÄNDERN!
+    public void showProcessesFromNetworkplan(Networkplan networkplan) {
+        int choice;
         do {
             consoleClear();
-            System.out.println("Ausgewählter Netzplan: " + networkplan.getName());
-            System.out.println("Verfügbare Knotenpunkte:");
-            for (Process process : networkplan.getListOfProcesses()) {
-                System.out.println("- " + process.getName());
+            // Falls keine Knoten erstellt wurden, abfrage, ob man welche erstellen möchte
+            if (networkplan.getListOfProcesses().isEmpty()) {
+                System.out.println("Keine Knoten. Liste leer...");
+                choice = readInt("\nKnoten erstellen? ('1' Ja? '2' Nein?) : ");
+
+                if (choice == 1) {
+                    createProcess(networkplan);
+                } else if (choice == 2) {
+                    break;
+                }
+
+            } else {
+                System.out.println("Ausgewählter Netzplan : " + networkplan.toString());
+                System.out.println("AP-Nr\tAP-Beschreibung\t\tDauer\tVorgänger");
+
+                for (Process process : networkplan.getListOfProcesses()) {
+                    System.out.printf("%d\t\t%S\t\t%d\t\t%S\n", process.getNr(), process.getName(), process.getDuration(), Arrays.toString(process.getDependencies()));
+                }
+
+                choice = readInt("\nWählen Sie ein Knoten um ihn zu bearbeiten. ('0' Zurück) : ");
+
+                if (choice == 0) {
+                    break;
+                }
+
+
+
+                if (choice > 0 && choice <= networkplan.getListOfProcesses().size()) {
+                    choice--; // da Listen bei 0,1,2,3,4 anfangen
+                    editProcess(networkplan.getListOfProcesses().get(choice));
+                }
             }
-
-            toDeleteProcess = readString("\nGeben Sie den Namen des zu löschenden Knotenpunkts ein ('0' zum Abbrechen): ");
-
-
-            // Versuchen, den Prozess zu löschen
-            String finalToDeleteProcess = toDeleteProcess;
-            isDeleted = networkplan.getListOfProcesses().removeIf(process -> process.getName().equals(finalToDeleteProcess));
-
-            if (isDeleted) {
-                System.out.println("Der Knotenpunkt '" + toDeleteProcess + "' wurde erfolgreich gelöscht.\n");
-            } else if (toDeleteProcess.length() == 1 && toDeleteProcess.charAt(0) == '0') {
-                break;
-            }else {
-                System.out.println("Der eingegebene Knotenpunkt '" + toDeleteProcess + "' wurde nicht gefunden.\n");
-            }
-
-        } while (askYesOrNo("Möchten Sie einen weiteren Knoten löschen?"));
+        } while (true);
         consoleClear();
     }
+
+    public void editProcess(Process process) {
+        int choice;
+        do {
+            consoleClear();
+            System.out.printf("Bearbeitung des Knotens : %S\n", process.getName());
+
+            System.out.println("'1' Namen ändern");
+            System.out.println("'2' Dauer ändern");
+            System.out.println("'3' Vorgänger ändern");
+            choice = readInt("Eingabe ('0' Zurück) : ");
+            consoleClear();
+
+            switch (choice) {
+                case 1:
+                    System.out.printf("Bearbeiten des Namen von : %S\n", process.getName());
+                    String name = readString("Neuer Name ('0' Zurück) : ");
+                    if (name.length() == 1 && name.charAt(0) == '0') {
+                        continue;
+                    }
+                    process.setName(name);
+                    continue;
+                case 2:
+                    break;
+                case 3:
+                    break;
+            }
+            // Wenn 0 Eingegeben wirt springt er hier hin und beendet die Methode
+            break;
+        } while (true);
+    }
+
+//    public void deleteProcess(Networkplan networkplan) {
+//        String toDeleteProcess;
+//        boolean isDeleted;
+//
+//        do {
+//            consoleClear();
+//            System.out.println("Ausgewählter Netzplan: " + networkplan.getName());
+//            System.out.println("Verfügbare Knotenpunkte:");
+//            for (Process process : networkplan.getListOfProcesses()) {
+//                System.out.println("- " + process.getName());
+//            }
+//
+//            toDeleteProcess = readString("\nGeben Sie den Namen des zu löschenden Knotenpunkts ein ('0' zum Abbrechen): ");
+//
+//
+//            // Versuchen, den Prozess zu löschen
+//            String finalToDeleteProcess = toDeleteProcess;
+//            isDeleted = networkplan.getListOfProcesses().removeIf(process -> process.getName().equals(finalToDeleteProcess));
+//
+//            if (isDeleted) {
+//                System.out.println("Der Knotenpunkt '" + toDeleteProcess + "' wurde erfolgreich gelöscht.\n");
+//            } else if (toDeleteProcess.length() == 1 && toDeleteProcess.charAt(0) == '0') {
+//                break;
+//            }else {
+//                System.out.println("Der eingegebene Knotenpunkt '" + toDeleteProcess + "' wurde nicht gefunden.\n");
+//            }
+//
+//        } while (askYesOrNo("Möchten Sie einen weiteren Knoten löschen?"));
+//        consoleClear();
+//    }
 
 
 
