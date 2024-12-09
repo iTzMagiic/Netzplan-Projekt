@@ -2,18 +2,34 @@ import java.util.List;
 
 public class Process {
 
+    private static int counter;
+
     private String name;
+    private int nr;
     private int duration;
     private int faz, fez, saz, sez, fp, gp;
     private int[] dependencies;
 
 
+//    // Konstruktor
+//    public Process(String name, int nr, int duration, int[] dependencies) {
+//        this.name = name;
+//        this.duration = duration;
+//        this.dependencies = dependencies;
+//        this.nr = nr;
+//    }
+
     // Konstruktor
-    public Process(String name, int duration, int[] dependencies) {
+    public Process(String name, int nr, int duration) {
         this.name = name;
         this.duration = duration;
+        this.nr = nr;
+    }
+
+    public void setDependencies(int[] dependencies) {
         this.dependencies = dependencies;
     }
+
 
     // Getter & Setter
     public String getName() {
@@ -87,5 +103,13 @@ public class Process {
 
     public int[] getDependencies() {
         return dependencies;
+    }
+
+    public int getNr() {
+        return nr;
+    }
+
+    public void setNr(int nr) {
+        this.nr = nr;
     }
 }

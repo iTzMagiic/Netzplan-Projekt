@@ -4,6 +4,7 @@ import java.util.List;
 public class Networkplan {
 
     private String name;
+    private int processCounter;
     private List<Process> listOfProcesses;
 
 
@@ -17,10 +18,21 @@ public class Networkplan {
     }
 
 
+    public int getProcessCounter() {
+        processCounter++;
+        return processCounter;
+    }
+
+//    public void deleteOneProcess() {
+//        processCounter--;
+//    }
+
+
     // Fügt der Liste ein neuen vorgang hinzu
     public void addProcess(Process process) {
         listOfProcesses.add(process);
     }
+
 
     public void overrideListOfProcesses(List<Process> newListOfProcesses) {
         this.listOfProcesses = newListOfProcesses;
