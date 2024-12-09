@@ -336,7 +336,16 @@ public class UserInterface2 {
                     process.setName(name);
                     continue;
                 case 2:
-                    break;
+                    System.out.printf("Bearbeiten der Dauer : %d von dem Knoten : %S\n", process.getDuration(), process.getName());
+                    int duration = readInt("Neue Dauer ('0' Zurück) : ");
+                    if (duration == 0) {
+                        continue;
+                    } else if (duration < 0) {
+                        System.out.println("Bitte nur echte Angaben!");
+                        continue;
+                    }
+                    process.setDuration(duration);
+                    continue;
                 case 3:
                     break;
             }
@@ -384,7 +393,7 @@ public class UserInterface2 {
             System.out.println("Ausgewählter Netzplan : " + networkplan.toString());
             System.out.println("AP-Nr\tAP-Beschreibung\t\tVorgänger\tDauer");
             for (Process process : networkplan.getListOfProcesses()) {
-                System.out.printf("%d\t\t%S\t\t%S\t%d\n", 1, process.getName(), Arrays.toString(process.getDependencies()), process.getDuration());
+                System.out.printf("%d\t\t%S\t\t%S\t%d\n", process.getNr(), process.getName(), Arrays.toString(process.getDependencies()), process.getDuration());
 
             }
         } while (readInt("'0' Zurück : ") != 0);
