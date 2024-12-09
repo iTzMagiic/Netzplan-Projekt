@@ -1,6 +1,13 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Logic {
+
+    Scanner scanner;
+
+    public Logic() {
+        scanner = new Scanner(System.in);
+    }
 
 
 
@@ -48,5 +55,30 @@ public class Logic {
             dependenciesArray[i] = listOfDependencies.get(i);
         }
         return dependenciesArray;
+    }
+
+    public boolean deleteDependencies(Process process) {
+        if (askYesOrNo("Möchten Sie alle Vorgänger löschen?")) {
+            process.setDependencies(null);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean askYesOrNo(String message) {
+        int choice;
+        do {
+            choice = readInt(message + " ('1' Ja, '2' Nein): ");
+        } while (choice < 1 || choice > 2);
+        return choice == 1;
+    }
+
+    private int readInt(String prompt) {
+        System.out.print(prompt);
+        while (!scanner.hasNextInt()) {
+            System.out.print("Bitte eine gültige Zahl eingeben: ");
+            scanner.next();
+        }
+        return scanner.nextInt();
     }
 }
