@@ -11,15 +11,20 @@ public class testAbhängigkeitenVorgänger {
         Process paket1 = new Process("Arbeit", 1, 5);
         Process paket2 = new Process("Schlafen", 2, 10);
         Process paket3 = new Process("Essen", 3, 2);
+        Process paket4 = new Process("Nichts", 4, 20);
 
-        listePakete1.add(paket1.getNr());
-        listePakete2.add(paket2.getNr());
-        listePakete2.add(paket3.getNr());
+        paket2.setDependencies(new int[1]);
+        int[] array = {1,2};
+        paket3.setDependencies(array);
 
-        Map<Integer, List<Integer>> listDependencies = new HashMap<>();
+        System.out.println(Arrays.toString(paket3.getDependencies()));
 
-        listDependencies.put(1, listePakete1);
-        listDependencies.put(2, listePakete2);
+        Map<Process, List<Process>> listDependencies = new HashMap<>();
+
+        listDependencies.put(paket1, new ArrayList<>());
+        listDependencies.put(paket2, Arrays.asList(paket1));
+        listDependencies.put(paket3, Arrays.asList(paket1));
+        listDependencies.put(paket4, Arrays.asList(paket2, paket3));
 
         System.out.println(listDependencies);
     }

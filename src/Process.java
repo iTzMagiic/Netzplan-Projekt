@@ -98,7 +98,7 @@ public class Process {
 
     @Override
     public String toString() {
-        return "name: " + name;
+        return "Paket: " + nr;
     }
 
     public int[] getDependencies() {
