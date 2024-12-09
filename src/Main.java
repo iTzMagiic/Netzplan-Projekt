@@ -4,8 +4,9 @@
 
         Logic logic = new Logic();
         UserInterface userInterface = new UserInterface(logic);
-
-        userInterface.start();
+        UserInterface2 gui = new UserInterface2(logic);
+        gui.menu();
+        //userInterface.start();
         System.out.println("\n\n DRAUßEN");
 
 

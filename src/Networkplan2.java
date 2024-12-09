@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Networkplan {
+public class Networkplan2 {
 
     private String name;
     private int processCounter;
@@ -10,21 +10,11 @@ public class Networkplan {
 
 
     // Konstruktor
-    public Networkplan(String name) {
+    public Networkplan2(String name) {
         this.name = name;
 
         // Jeder neuer Netzplan erstellt seine eigene Liste
         listOfProcesses = new ArrayList<>();
-    }
-
-
-    public int getProcessCounter() {
-        processCounter++;
-        return processCounter;
-    }
-
-    public void deleteOneProcess() {
-        processCounter--;
     }
 
 

@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class Process {
+public class Process2 {
 
     private static int counter;
 
@@ -11,25 +11,12 @@ public class Process {
     private int[] dependencies;
 
 
-//    // Konstruktor
-//    public Process(String name, int nr, int duration, int[] dependencies) {
-//        this.name = name;
-//        this.duration = duration;
-//        this.dependencies = dependencies;
-//        this.nr = nr;
-//    }
-
     // Konstruktor
-    public Process(String name, int nr, int duration) {
+    public Process2(String name, int nr, int duration) {
         this.name = name;
         this.duration = duration;
         this.nr = nr;
     }
-
-    public void setDependencies(int[] dependencies) {
-        this.dependencies = dependencies;
-    }
-
 
     // Getter & Setter
     public String getName() {
