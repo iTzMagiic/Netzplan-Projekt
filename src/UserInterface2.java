@@ -141,13 +141,6 @@ public class UserInterface2 {
         int dependencie;
         int ownNr = process.getNr();
 
-        if (process.getDependencies() != null) {
-            if (!logic.deleteDependencies(process)) {
-                return;
-            }
-            consoleClear();
-        }
-
         do{
             do {            // Ein Vorgänger für den Process entgegennehmen
                 if (!listOfDependencies.isEmpty()) { // Gibt die Aktuellen Vorgänger wieder als übersicht
@@ -202,6 +195,8 @@ public class UserInterface2 {
             consoleClear();
 
         } while (askYesOrNo("Möchten Sie ein weiteren Vorgänger hinzufügen?"));
+
+        consoleClear();
 
         if (listOfDependencies.isEmpty()) {
             return;
@@ -299,7 +294,7 @@ public class UserInterface2 {
                 }
 
             } else {
-                System.out.println("Ausgewählter Netzplan : " + networkplan.toString());
+                System.out.println("Ausgewählter Netzplan : " + networkplan);
                 System.out.println("AP-Nr\tAP-Beschreibung\t\tDauer\tVorgänger");
 
                 for (Process process : networkplan.getListOfProcesses()) {
@@ -334,7 +329,10 @@ public class UserInterface2 {
 
                 System.out.println("'1' Namen ändern");
                 System.out.println("'2' Dauer ändern");
-                System.out.println("'3' Vorgänger ändern");
+                if (process.getNr() != 1) {
+                    // Knoten 1 kann keine Vorgänger haben
+                    System.out.println("'3' Vorgänger ändern");
+                }
                 choice = readInt("Eingabe ('0' Zurück) : ");
 
                 if (choice == 0) {
@@ -371,8 +369,17 @@ public class UserInterface2 {
                     }
                     continue;
                 case 3:
+                    if (process.getNr() == 1) {
+                        continue;
+                    }
+                    if (process.getDependencies() != null) {
+                        if (!logic.deleteDependencies(process)) {
+                            continue;
+                        }
+                        consoleClear();
+                    }
                     addDependencies(networkplan, process);
-                    break;
+                    continue;
             }
             // Wenn 0 Eingegeben wirt springt er hier hin und beendet die Methode
             break;
@@ -432,7 +439,7 @@ public class UserInterface2 {
             System.out.println("Ausgewählter Netzplan : " + networkplan.toString() + "\n");
             if (!networkplan.getListOfProcesses().isEmpty()) {
                 for (Process process : networkplan.getListOfProcesses()) {
-                    System.out.println(process.toString());
+                    System.out.println(process.getName());
                 }
             } else {
                 System.out.println("Netzplan ist Leer.");
