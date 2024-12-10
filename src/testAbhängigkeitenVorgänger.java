@@ -4,9 +4,6 @@ import java.util.*;
 public class testAbhängigkeitenVorgänger {
     public static void main(String[] args){
 
-        List<Integer> listePakete1 = new ArrayList<>();
-        List<Integer> listePakete2 = new ArrayList<>();
-
 
         Process paket1 = new Process("Arbeit", 1, 5);
         Process paket2 = new Process("Schlafen", 2, 10);

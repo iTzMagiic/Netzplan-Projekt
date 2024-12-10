@@ -1,144 +1,341 @@
-import java.util.Scanner;
+import java.util.*;
 
 public class UserInterface {
-
 
     private Scanner scanner;
     private Logic logic;
 
 
     public UserInterface(Logic logic) {
-        scanner = new Scanner(System.in);
         this.logic = logic;
+        this.scanner = new Scanner(System.in);
     }
 
-    public void start() {
-        System.out.println("Netzwerkplan-Manager");
-        int option = -1;
 
-        // Prüfen Obj in der Liste leer
-        while (option != 0) {
+
+    public void menu() {
+        boolean cancel = false;
+
+        while (!cancel) {
+            System.out.println("███    ██ ███████ ████████ ███████ ██████  ██       █████  ███    ██     ███████ ██████  ███████ ████████ ███████ ██      ██      ███████ ███    ██ \n" + "████   ██ ██         ██       ███  ██   ██ ██      ██   ██ ████   ██     ██      ██   ██ ██         ██    ██      ██      ██      ██      ████   ██ \n" + "██ ██  ██ █████      ██      ███   ██████  ██      ███████ ██ ██  ██     █████   ██████  ███████    ██    █████   ██      ██      █████   ██ ██  ██ \n" + "██  ██ ██ ██         ██     ███    ██      ██      ██   ██ ██  ██ ██     ██      ██   ██      ██    ██    ██      ██      ██      ██      ██  ██ ██ \n" + "██   ████ ███████    ██    ███████ ██      ███████ ██   ██ ██   ████     ███████ ██   ██ ███████    ██    ███████ ███████ ███████ ███████ ██   ████ \n" + "                                                                                                                                                    \n");
             if (NetworkplanList.isListEmpty()) {
-                System.out.println("\n--- Hauptmenü ---");
-                System.out.println("--- Status: Keine Netzpläne vorhanden ---\n\nOptionen:\n");
-                System.out.print("'1' Erstellen\t\t");
-                System.out.println("'0' Beenden");
-
-                option = readInt("Wähle eine Option: \n");
-                if (option == 1) {
-                    Networkplan networkplan = createNetworkplan();
-                    //handleSubMenu(networkplan);
-                } else if (option == 0) {
-                    System.out.println("\nProgramm beendet.");
-                } else {
-                    System.out.println("Ungültige Eingabe.");
-                }
+                cancel = createNetworkplan();
+                logic.consoleClear();
             } else {
-                System.out.println("\n--- Hauptmenü ---");
-                System.out.println("--- Status: Netzpläne vorhanden ---");
-                showNetworkplanList();
-                System.out.println("Wähle einen Netzplan(Nummer) oder 0 zum beenden:");
+                showMainMenu();
 
-                option = readInt("Deine Wahl: ");
-                if (option == 0) {
-                    System.out.println("\nProgramm beendet.");
-                } else if (option > 0 && option <= NetworkplanList.getNetworkplan().size()) {
-                    handleSubMenu(NetworkplanList.getNetworkplanChoice(option-1));
-                } else {
-                    System.out.println("Ungültige Eingabe.");
+                int choice = logic.readInt("Bitte wählen Sie: ");
+
+                switch (choice) {
+                    case 1:
+                        createNetworkplan();
+                        break;
+                    case 2:
+                        showNetworkplanList();
+                        break;
+                    case 0:
+                        cancel = true;
+                        break;
                 }
             }
         }
+        System.out.println("\nDas Programm wird Beendet....");
     }
+
 
     public void showMainMenu() {
-        System.out.println("\n--- Hauptmenü ---");
-        System.out.println("1: Netzplan erstellen");
-        System.out.println("2: Netzplan auswählen");
-        System.out.println("0: Beenden");}
-
-    public Networkplan createNetworkplan() {
-        String name = readString("Gib Namen für neuen Netzplan ein: \n");
-        System.out.println("Netzplan '" + name + "' wurde erstellt.");
-        return logic.addNetworkplan(name);
+        System.out.println("Willkommen");
+        System.out.println("Was Möchten Sie machen?\n");
+        System.out.println("'1' Neues Netzplan erstellen.");
+        System.out.println("'2' Netzplan Anzeigen");
+        System.out.println("'0' Beenden");
     }
 
-    private void handleSubMenu(Networkplan currentNetworkplan) {
-        int subOption = -1;
 
-        while (subOption != 0) {
-            System.out.println("\n\n--- Netzplan-Menü: " + currentNetworkplan.getName() + " ---");
-            System.out.print("1: Paket erstellen\t\t");
-            System.out.print("2: Netzplan ausgeben\t\t");
-            System.out.print("3: Tabelle ausgeben\t\t");
-            System.out.print("4: Netzplan wählen\t\t");
-            System.out.print("5: Netzplan erstellen\t\t");
-            System.out.print("9: Zurück\t\t");
-            System.out.println("0: Beenden\n");
+    // Gibt ein Boolean zurück, ob ein Netzplan erstellt worden ist oder ob beendet werden soll.
+    public boolean createNetworkplan() {
+        System.out.println("Willkommen");
+        String name;
+        do {    // Die Schleife wiederholt sich so lange bis was Eingegeben wurde.
+            System.out.println("Falls Sie das Programm beenden möchten geben Sie '0' ein.");
+            System.out.println("Bitte geben Sie den Namen des Netzplans ein: ");
+            name = scanner.nextLine();
+            logic.consoleClear();
+        } while (name.isEmpty());
 
-            subOption = readInt("Wähle eine Option: \n");
-            switch (subOption) {
-                case 1:
-                    System.out.println("Paket erstellen - Noch nicht implementiert.");
-                    //logic.addProcessToNetworkplan();
-                    break;
-                case 2:
-                    System.out.println("Netzplan ausgeben - Noch nicht implementiert.");
-                    break;
-                case 3:
-                    System.out.println("Tabelle ausgeben - Noch nicht implementiert.");
-                    break;
-                case 4:
-                    showNetworkplanList();
-                    break; // Zurück zur Netzplan-Auswahl
-                case 5:
-                    Networkplan networkplan = createNetworkplan();
-                    handleSubMenu(networkplan);
-                    break;
-                case 9:
-                    return; //Ebene zurück
-                case 0:
-                    System.out.println("Zurück zum Hauptmenü.");
-                    break;
-                default:
-                    System.out.println("Ungültige Eingabe.");
+        if (name.length() == 1 && name.charAt(0) == '0') {
+            return true;
+        }
+
+        // Erstellung des Netzplans
+        Networkplan networkplan = logic.addNetworkplan(name);
+
+        logic.consoleClear();
+        System.out.println("Netzwerkplan wurde erstellt.");
+
+        if (logic.askYesOrNo("Möchten Sie Knotenpunkte hinzufügen?")) {
+            createProcess(networkplan);
+        }
+        return false;
+    }
+
+    // Erstellt Processe für einen Netzplan
+    public void createProcess(Networkplan networkplan) {
+        String name;
+        int duration;
+
+        do {
+            logic.consoleClear();
+            do {            // Namen des Knotenpunkts
+                name = logic.readString("Bitte geben Sie den Namen des Knotenpunkts an ('0' zum Abbrechen): ");
+            } while (name.isEmpty());
+
+            if (name.length() == 1 && name.charAt(0) == '0') { // Abbruch
+                break;
             }
+
+
+            do {            // Dauer des Knotenpunkts
+                logic.consoleClear();
+                System.out.printf("Knotenpunkt : %S\n\n", name);
+                duration = logic.readInt("Bitte geben Sie die Dauer an ('0' zum Abbrechen): ");
+            } while (duration < 0);
+            logic.consoleClear();
+
+            if (duration == 0) {
+                break;
+            }
+
+
+            int choice;
+
+
+            Process process = new Process(name, networkplan.getProcessCounter(), duration);
+            logic.addProcessToNetworkplan(networkplan, process);
+
+
+            if (logic.isAllowedToCreateDependencies(networkplan)) {
+                do {            // Einen Vorgänger angeben
+                    System.out.printf("Nr : %d\t Knotenpunkt : %s \tDauer : %d%n\n", process.getNr(), name, duration);
+                    System.out.println("Möchten Sie ein Vorgänger hinzufügen?");
+                    choice = logic.readInt("'1' Ja? '2' Nein? : ");
+                    logic.consoleClear();
+                } while (choice < 1 || choice > 2);
+
+                if (choice == 1) {
+                    logic.addDependencies(networkplan, process);
+                }
+            }
+
+        } while (logic.askYesOrNo("Möchten Sie noch ein Knotenpunkt hinzufügen?"));
+        logic.consoleClear();
+    }
+
+
+    // Zeigt alle Vorhandenen Netzpläne an
+    public void showNetworkplanList() {
+        boolean cancel = false;
+        logic.consoleClear();
+
+        while (!cancel) {
+            Map<Integer, String> mapNetworkplan = new HashMap<>();
+            System.out.println("Vorhandene Netzpläne:");
+
+            int index = 1;
+            for (Networkplan networkplan : NetworkplanList.getNetworkplan()) {
+                mapNetworkplan.put(index, networkplan.getName());
+                System.out.println("'" + index + "'" + " : " + mapNetworkplan.get(index));
+                index++;
+            }
+            System.out.println("'0' : Zurück");
+
+            int choice = logic.readInt("Bitte wählen Sie ein Netzplan aus falls Sie möchten: ");
+
+            if (choice == 0) {
+                cancel = true;
+            } else if (choice <= NetworkplanList.getNetworkplan().size() && choice >= 0) {
+                logic.consoleClear();
+                choice--;
+                selectedNetworkplan(choice);
+            }
+            logic.consoleClear();
         }
     }
 
-    public void createProcess(){
-        clearConsole();
 
-    }
-    public void showNetworkplanList(){
-        System.out.println("Vorhandene Netzpläne:");
+    public void selectedNetworkplan(int choice) {
+        int option;
+        Networkplan networkplan = NetworkplanList.getNetworkplan().get(choice);
+        do {
+            System.out.println("Ausgewählter Netzplan : " + networkplan.toString() + "\n\n");
+            System.out.println("'1' Netzplan ausgeben");
+            System.out.println("'2' Tabelle ausgeben");
+            System.out.println("'3' Neuen Knoten hinzufügen");
+            System.out.println("'4' Knoten Anzeigen/-Bearbeiten");
+            System.out.println("'5' Anderen Netzplan wählen");
+            System.out.println("'0' Abbrechen");
+            option = logic.readInt("Eingabe : ");
 
-        int index = 1;
-        for (Networkplan networkplan : NetworkplanList.getNetworkplan()){
-            System.out.println(index + " : " + networkplan.toString());
-            index++;
-        }
+            switch (option) {
+                case 1:
+                    showNetworkplan(networkplan);
+                    continue;
+                case 2:
+                    showNetworkplanTable(networkplan);
+                    continue;
+                case 3:
+                    createProcess(networkplan);
+                    continue;
+                case 4:
+                    showProcessesFromNetworkplan(networkplan);
+                    continue;
+                case 5:
+                    logic.consoleClear();
+                    return;
+            }
+            logic.consoleClear();
+        } while (option != 0);
+        logic.consoleClear();
     }
 
-    public void clearConsole() {
-        for (int i = 0; i < 10; i++) {
-            System.out.println();
-        }
+
+    public void showProcessesFromNetworkplan(Networkplan networkplan) {
+        int choice;
+        do {
+            logic.consoleClear();
+            // Falls keine Knoten erstellt wurden, abfrage, ob man welche erstellen möchte
+            if (networkplan.getListOfProcesses().isEmpty()) {
+                System.out.println("Keine Knoten. Liste leer...");
+                choice = logic.readInt("\nKnoten erstellen? ('1' Ja? '2' Nein?) : ");
+
+                if (choice == 1) {
+                    createProcess(networkplan);
+                } else if (choice == 2) {
+                    break;
+                }
+
+            } else {
+                System.out.println("Ausgewählter Netzplan : " + networkplan);
+                System.out.println("AP-Nr\tAP-Beschreibung\t\tDauer\tVorgänger");
+
+                for (Process process : networkplan.getListOfProcesses()) {
+                    System.out.printf("%d\t\t%S\t\t%d\t\t%S\n", process.getNr(), process.getName(), process.getDuration(), Arrays.toString(process.getDependencies()));
+                }
+
+                choice = logic.readInt("\nWählen Sie ein Knoten um ihn zu bearbeiten. ('0' Zurück) : ");
+
+                if (choice == 0) {
+                    break;
+                }
+
+
+                if (choice > 0 && choice <= networkplan.getListOfProcesses().size()) {
+                    choice--; // da Listen bei 0,1,2,3,4 anfangen
+                    editProcess(networkplan, networkplan.getListOfProcesses().get(choice));
+                }
+            }
+        } while (true);
+        logic.consoleClear();
     }
 
-    private int readInt(String prompt) {
-        System.out.print(prompt);
-        while (!scanner.hasNextInt()) {
-            System.out.print("Bitte eine gültige Zahl eingeben: ");
-            scanner.next();
-        }
-        return scanner.nextInt();
+
+    // Ist zur Änderung eines Knotens da
+    public void editProcess(Networkplan networkplan, Process process) {
+        int choice;
+        do {
+            while (true) {
+                logic.consoleClear();
+                System.out.printf("Bearbeitung des Knotens : %S\tDauer : %d\tVorgänger : %s\n", process.getName(), process.getDuration(), Arrays.toString(process.getDependencies()));
+
+                System.out.println("'1' Namen ändern");
+                System.out.println("'2' Dauer ändern");
+                if (process.getNr() != 1) {
+                    // Knoten 1 kann keine Vorgänger haben
+                    System.out.println("'3' Vorgänger ändern");
+                }
+                choice = logic.readInt("Eingabe ('0' Zurück) : ");
+
+                if (choice == 0) {
+                    logic.consoleClear();
+                    break;
+                } else if (choice >= 1 && choice <= 3) {
+                    logic.consoleClear();
+                    break;
+                }
+            }
+
+            switch (choice) {
+                case 1:
+                    System.out.printf("Bearbeiten des Namen von : %S\n", process.getName());
+                    String name = logic.readString("Neuer Name ('0' Zurück) : ");
+                    if (name.length() == 1 && name.charAt(0) == '0') {
+                        continue;
+                    }
+                    process.setName(name);
+                    continue;
+                case 2:
+                    while (true) {
+                        logic.consoleClear();
+                        System.out.printf("Bearbeiten der Dauer : %d von dem Knoten : %S\n", process.getDuration(), process.getName());
+                        int duration = logic.readInt("Neue Dauer ('0' Zurück) : ");
+                        if (duration == 0) {
+                            break;
+                        } else if (duration < 0) {
+                            System.out.println("Bitte nur echte Angaben!");
+                            continue;
+                        }
+                        process.setDuration(duration);
+                        break;
+                    }
+                    continue;
+                case 3:
+                    if (process.getNr() == 1) {
+                        continue;
+                    }
+                    if (process.getDependencies() != null) {
+                        if (!logic.deleteDependencies(process)) {
+                            continue;
+                        }
+                        logic.consoleClear();
+                    }
+                    logic.addDependencies(networkplan, process);
+                    continue;
+            }
+            // Wenn 0 Eingegeben wirt springt er hier hin und beendet die Methode
+            break;
+        } while (true);
     }
 
-    private String readString(String prompt) {
-        System.out.print(prompt);
-        scanner.nextLine(); // Leere Zeile lesen
-        return scanner.nextLine();
+
+    public void showNetworkplanTable(Networkplan networkplan) {
+        do {
+            logic.consoleClear();
+            System.out.println("Ausgewählter Netzplan : " + networkplan.toString());
+            System.out.println("AP-Nr\tAP-Beschreibung\t\tVorgänger\tDauer");
+            for (Process process : networkplan.getListOfProcesses()) {
+                System.out.printf("%d\t\t%S\t\t%d\t%s\n", process.getNr(), process.getName(), process.getDuration(), Arrays.toString(process.getDependencies()));
+
+            }
+        } while (logic.readInt("'0' Zurück : ") != 0);
+        logic.consoleClear();
     }
+
+
+    public void showNetworkplan(Networkplan networkplan) {
+        do {
+            logic.consoleClear();
+            System.out.println("Ausgewählter Netzplan : " + networkplan.toString() + "\n");
+            if (!networkplan.getListOfProcesses().isEmpty()) {
+                for (Process process : networkplan.getListOfProcesses()) {
+                    System.out.println(process.getName());
+                }
+            } else {
+                System.out.println("Netzplan ist Leer.");
+            }
+        } while (logic.readInt("'0' Zurück : ") != 0);
+        logic.consoleClear();
+    }
+
+
 
 }
