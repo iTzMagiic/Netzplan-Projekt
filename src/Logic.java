@@ -65,15 +65,89 @@ public class Logic {
         return false;
     }
 
-    private boolean askYesOrNo(String message) {
-        int choice;
+
+
+    // Gibt ein Dynamisches Array wieder mit Dependencies
+    public void addDependencies(Networkplan networkplan, Process process) {
+        ArrayList<Integer> listOfDependencies = new ArrayList<>(); // Liste für die Angegebenen Vorgänger
+        int dependencie;
+        int ownNr = process.getNr();
+
         do {
-            choice = readInt(message + " ('1' Ja, '2' Nein): ");
-        } while (choice < 1 || choice > 2);
-        return choice == 1;
+            do {            // Ein Vorgänger für den Process entgegennehmen
+                if (!listOfDependencies.isEmpty()) { // Gibt die Aktuellen Vorgänger wieder als übersicht
+                    System.out.print("Aktuelle Vorgänger: ");
+                    for (int i = 0; i < listOfDependencies.size(); i++) {
+                        System.out.printf("%d, ", listOfDependencies.get(i));
+                    }
+                    System.out.println("\n");
+                }
+                //TODO:: Eine Liste aller möglichen Vorgänger hier angeben im Sysout
+                dependencie = readInt("Bitte geben Sie ein Vorgänger an ('0' zum Abbrechen): ");
+
+
+                if (dependencie == ownNr) {
+                    consoleClear();
+                    System.out.println("Bitte nicht den eigenen Knoten angeben!");
+                    dependencie = -1;
+                    continue;
+                }
+
+                if (dependencie > ownNr) {
+                    consoleClear();
+                    System.out.println("Nur Vorgänger keine Nachfolger!");
+                    dependencie = -1;
+                    continue;
+                }
+
+                // Prüft, ob ein existierender Vorgänger angegeben wurde und nicht er selbst
+                if (dependencie != 0 && !isCorrectDependencies(networkplan, dependencie)) {
+                    consoleClear();
+                    System.out.println("Bitte nur ein Existierenden Vorgänge angeben!");
+                    dependencie = -1;
+                    continue;
+                }
+
+
+                // Prüft, ob er die gleichen Vorgänger angibt
+                if (listOfDependencies.contains(dependencie)) {
+                    consoleClear();
+                    System.out.println("Bitte nicht den gleichen Vorgänger angeben!");
+                    dependencie = -1;   // damit die Schleife wiederholt wird
+                    continue;
+                }
+                consoleClear();
+            } while (dependencie < 0);
+
+            if (dependencie == 0) {
+                break;
+            } // 0 == Abbrechen
+
+            // Vorgänger in ein ArrayList packen
+            listOfDependencies.add(dependencie);
+
+            consoleClear();
+
+        } while (askYesOrNo("Möchten Sie ein weiteren Vorgänger hinzufügen?"));
+        consoleClear();
+
+        if (listOfDependencies.isEmpty()) {
+            return;
+        }
+        process.setDependencies(getDependenciesArray(listOfDependencies));
     }
 
-    private int readInt(String prompt) {
+
+
+
+
+    public String readString(String prompt) {
+        System.out.print(prompt);
+        scanner.nextLine(); // Leere Zeile lesen
+        return scanner.nextLine();
+    }
+
+    public int readInt(String prompt) {
         System.out.print(prompt);
         while (!scanner.hasNextInt()) {
             System.out.print("Bitte eine gültige Zahl eingeben: ");
@@ -81,4 +155,20 @@ public class Logic {
         }
         return scanner.nextInt();
     }
+
+    public boolean askYesOrNo(String message) {
+        int choice;
+        do {
+            choice = readInt(message + " ('1' Ja, '2' Nein): ");
+        } while (choice < 1 || choice > 2);
+        return choice == 1;
+    }
+
+    public void consoleClear() {
+        for (int i = 0; i < 10; i++) {
+            System.out.println();
+        }
+    }
+
+
 }
