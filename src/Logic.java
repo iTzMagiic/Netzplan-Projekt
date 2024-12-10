@@ -1,5 +1,5 @@
-import java.util.ArrayList;
-import java.util.Scanner;
+
+import java.util.*;
 
 public class Logic {
 
@@ -201,6 +201,82 @@ public class Logic {
             System.out.println();
         }
     }
+
+
+    public List<List<Process>> sortProcesses(Networkplan networkplan) {
+        List<List<Process>> sortedProcessesList = new ArrayList<>();
+        List<Process> addedProcess = new ArrayList<>();
+        int counter = 0;
+
+        for (Process process : networkplan.getListOfProcesses()) {
+            if (process.getNr() == 1) {
+                sortedProcessesList.add(List.of(process));
+                continue;
+            }
+
+            if (process.getDependencies() == null) {
+                addedProcess.add(process);
+            }
+
+            if (process.getDependencies() != null) {
+
+            }
+        }
+
+
+        for (int i = 0; i < networkplan.getListOfProcesses().size(); i++) {
+            Process process = networkplan.getListOfProcesses().get(i);
+
+            // Für die alle ohne Vorgänger in die erste Liste
+            if (process.getNr() == 1) {
+                for (Process processWithoutDependencies : networkplan.getListOfProcesses()) {
+                    if (processWithoutDependencies.getDependencies() == null) {
+                        addedProcess.add(processWithoutDependencies);
+                    }
+                }
+                sortedProcessesList.add(addedProcess);
+                addedProcess.clear();
+                continue;
+            }
+
+            // Überspringt alle ohne Vorgänger da sie in der ersten Liste sind
+            if (process.getDependencies() == null) {
+                continue;
+            }
+
+
+
+            //TODO:: hier prüfen ob dependencies in der addedProcess ist
+            if (process.getDependencies() == addedProcess.forEach(i -> i)) {
+                sortedProcessesList.add(addedProcess);
+                addedProcess.clear();
+                counter++;
+            }
+
+
+            // Prüft die nächsten Listen
+            if (process.getDependencies() != null) {
+
+                outer:
+                for (Process processesFromOldList : sortedProcessesList.get(counter)) {
+                    for (int indexOfDependencies : processesFromOldList.getDependencies()) {
+                        if (processesFromOldList.getNr() == indexOfDependencies) {
+                            addedProcess.add(process);
+                            break outer;
+                        }
+                    }
+                }
+            }
+
+        }
+
+
+        return sortedProcessesList;
+
+
+    }
+
+
 
 
 }
