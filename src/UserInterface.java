@@ -219,7 +219,7 @@ public class UserInterface {
                 System.out.println("AP-Nr\tAP-Beschreibung\t\tDauer\tVorgänger");
 
                 for (Process process : networkplan.getListOfProcesses()) {
-                    System.out.printf("%d\t\t%S\t\t%d\t\t%S\n", process.getNr(), process.getName(), process.getDuration(), Arrays.toString(process.getDependencies()));
+                    System.out.printf("%d\t\t%S\t\t%d\t\t[%S]\n", process.getNr(), process.getName(), process.getDuration(), process.getDependenciesAsString());
                 }
 
                 choice = logic.readInt("\nWählen Sie ein Knoten um ihn zu bearbeiten. ('0' Zurück) : ");
@@ -245,7 +245,7 @@ public class UserInterface {
         do {
             while (true) {
                 logic.consoleClear();
-                System.out.printf("Bearbeitung des Knotens : %S\tDauer : %d\tVorgänger : %s\n", process.getName(), process.getDuration(), Arrays.toString(process.getDependencies()));
+                System.out.printf("Bearbeitung des Knotens : %S\tDauer : %d\tVorgänger : [%S]\n", process.getName(), process.getDuration(), process.getDependenciesAsString());
 
                 System.out.println("'1' Namen ändern");
                 System.out.println("'2' Dauer ändern");
@@ -311,9 +311,9 @@ public class UserInterface {
         do {
             logic.consoleClear();
             System.out.println("Ausgewählter Netzplan : " + networkplan.toString());
-            System.out.println("AP-Nr\tAP-Beschreibung\t\tVorgänger\tDauer");
+            System.out.println("AP-Nr\tAP-Beschreibung\t\tDauer\tVorgänger");
             for (Process process : networkplan.getListOfProcesses()) {
-                System.out.printf("%d\t\t%S\t\t%d\t%s\n", process.getNr(), process.getName(), process.getDuration(), Arrays.toString(process.getDependencies()));
+                System.out.printf("%d\t\t%S\t\t%d\t[%S]\n", process.getNr(), process.getName(), process.getDuration(), process.getDependenciesAsString());
 
             }
         } while (logic.readInt("'0' Zurück : ") != 0);
