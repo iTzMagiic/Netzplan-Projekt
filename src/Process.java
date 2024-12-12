@@ -102,7 +102,19 @@ public class Process {
 
     @Override
     public String toString() {
-        return "Paket: " + nr;
+//        String[] frame = {"╭────────────┬───────────┬────────────╮" +
+//                String.format("│     %-6s │     %-5s │     %-6s │", getFaz(), getDuration(), getFez()) +
+//                "├────────────┴───────────┴────────────┤" +
+//                "│                                     │" +
+//                String.format("│ %-35s │", getName()) +
+//                "│                                     │"
+//                + "├─────────┬────────┬────────┬─────────┤" +
+//                String.format("│   %-5s │   %-4s │   %-4s │   %-5s │", getSaz(), getFp(), getGp(), getSez()) +
+//                "╰─────────┴────────┴────────┴─────────╯" };
+        return ("Nr : %d\t Name : %S\t Dauer : %d\n" +
+                "FAZ : %d\t GP : %d\t FEZ : %d\n" +
+                "SAZ : %d\t FP : %d\t SEZ : %d\n" +
+                "Vorgänger : %s\n\n").formatted(nr, name, duration, faz, gp, fez, saz, fp, sez, getDependenciesAsString());
     }
 
     public List<Process> getListOfDependencies() {

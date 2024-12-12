@@ -284,6 +284,27 @@ public class Logic {
 //    }
 
 
+    public void startCalculate(Networkplan networkplan) {
+        List<Process> listOfProcesses = networkplan.getListOfProcesses();
+
+//        CalculationProcess.calculateStart(listOfProcesses);
+//
+//        CalculationProcess.calculateFAZ(listOfProcesses);
+//
+//        CalculationProcess.calculateFEZ(listOfProcesses);
+//
+//        CalculationProcess.calculateSEZ(listOfProcesses);
+//
+//        CalculationProcess.calculateSAZ(listOfProcesses);
+//
+//        CalculationProcess.calculateGP(listOfProcesses);
+//
+//        CalculationProcess.calculateFP(listOfProcesses);
+
+        CalculationProcess.calculateAll(listOfProcesses);
+
+    }
+
 
 
 }
