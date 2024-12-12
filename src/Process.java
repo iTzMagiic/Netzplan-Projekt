@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Process {
 
@@ -8,16 +9,8 @@ public class Process {
     private int nr;
     private int duration;
     private int faz, fez, saz, sez, fp, gp;
-    private int[] dependencies;
+    private List<Process> listOfDependenciesProcesses;
 
-
-//    // Konstruktor
-//    public Process(String name, int nr, int duration, int[] dependencies) {
-//        this.name = name;
-//        this.duration = duration;
-//        this.dependencies = dependencies;
-//        this.nr = nr;
-//    }
 
     // Konstruktor
     public Process(String name, int nr, int duration) {
@@ -26,8 +19,19 @@ public class Process {
         this.nr = nr;
     }
 
-    public void setDependencies(int[] dependencies) {
-        this.dependencies = dependencies;
+
+    public void setDependencies(List<Process> dependenciesProcess) {
+        this.listOfDependenciesProcesses = dependenciesProcess;
+    }
+
+    public String getDependenciesAsString() {
+        // Wandelt die Liste der Dependencies in einen String um
+        if (listOfDependenciesProcesses != null) {
+            return listOfDependenciesProcesses.stream()
+                    .map(dependency -> String.valueOf(dependency.getNr())) // Nr als String umwandeln
+                    .collect(Collectors.joining(", "));
+        }
+        return "Keine Vorgänger";
     }
 
 
@@ -101,8 +105,8 @@ public class Process {
         return "Paket: " + nr;
     }
 
-    public int[] getDependencies() {
-        return dependencies;
+    public List<Process> getListOfDependencies() {
+        return listOfDependenciesProcesses;
     }
 
     public int getNr() {

@@ -48,14 +48,6 @@ public class Logic {
         return false;
     }
 
-    // Hier wird ein Array aus ArrayList erstellt und zurückgegeben
-    public int[] getDependenciesArray(ArrayList<Integer> listOfDependencies) {
-        int[] dependenciesArray = new int[listOfDependencies.size()];
-        for (int i = 0; i < listOfDependencies.size(); i++) {
-            dependenciesArray[i] = listOfDependencies.get(i);
-        }
-        return dependenciesArray;
-    }
 
     public boolean deleteDependencies(Process process) {
         if (askYesOrNo("Möchten Sie alle Vorgänger löschen?")) {
@@ -66,19 +58,17 @@ public class Logic {
     }
 
 
-
-    // Gibt ein Dynamisches Array wieder mit Dependencies
+    // Erstellt die Dependencies für die Processe
     public void addDependencies(Networkplan networkplan, Process process) {
-        ArrayList<Integer> listOfDependencies = new ArrayList<>(); // Liste für die Angegebenen Vorgänger
+        List<Process> listOfDependencies = new ArrayList<>(); // Liste für die Angegebenen Vorgänger
         int dependencie;
-        int ownNr = process.getNr();
 
         do {
-            do {            // Ein Vorgänger für den Process entgegennehmen
+            do {
                 if (!listOfDependencies.isEmpty()) { // Gibt die Aktuellen Vorgänger wieder als übersicht
                     System.out.print("Aktuelle Vorgänger: ");
                     for (int i = 0; i < listOfDependencies.size(); i++) {
-                        System.out.printf("%d, ", listOfDependencies.get(i));
+                        System.out.printf("%d, ", listOfDependencies.get(i).getNr());
                     }
                     System.out.println("\n");
                 }
@@ -86,14 +76,14 @@ public class Logic {
                 dependencie = readInt("Bitte geben Sie ein Vorgänger an ('0' zum Abbrechen): ");
 
 
-                if (dependencie == ownNr) {
+                if (dependencie == process.getNr()) {
                     consoleClear();
                     System.out.println("Bitte nicht den eigenen Knoten angeben!");
                     dependencie = -1;
                     continue;
                 }
 
-                if (dependencie > ownNr) {
+                if (dependencie > process.getNr()) {
                     consoleClear();
                     System.out.println("Nur Vorgänger keine Nachfolger!");
                     dependencie = -1;
@@ -110,7 +100,7 @@ public class Logic {
 
 
                 // Prüft, ob er die gleichen Vorgänger angibt
-                if (listOfDependencies.contains(dependencie)) {
+                if (listOfDependencies.contains(getSelectedProcessForDependenciesList(networkplan , dependencie))) {
                     consoleClear();
                     System.out.println("Bitte nicht den gleichen Vorgänger angeben!");
                     dependencie = -1;   // damit die Schleife wiederholt wird
@@ -124,17 +114,37 @@ public class Logic {
             } // 0 == Abbrechen
 
             // Vorgänger in ein ArrayList packen
-            listOfDependencies.add(dependencie);
+            listOfDependencies.add(getSelectedProcessForDependenciesList(networkplan, dependencie));
 
             consoleClear();
 
-        } while (askYesOrNo("Möchten Sie ein weiteren Vorgänger hinzufügen?"));
+        } while (isMoreDependenciesAllowed(networkplan, process, listOfDependencies) && askYesOrNo("Möchten Sie ein weiteren Vorgänger hinzufügen?"));
         consoleClear();
 
         if (listOfDependencies.isEmpty()) {
             return;
         }
-        process.setDependencies(getDependenciesArray(listOfDependencies));
+        process.setDependencies(listOfDependencies);
+    }
+
+    public boolean isMoreDependenciesAllowed(Networkplan networkplan, Process process, List<Process> listOfDependencies) {
+        for (Process checkProcess : networkplan.getListOfProcesses()) {
+            if (checkProcess.getNr() != process.getNr() && !listOfDependencies.contains(checkProcess) && checkProcess.getNr() < process.getNr()) {
+                return true; // Es gibt mindestens einen Prozess, der nicht in den Abhängigkeiten enthalten ist
+            }
+        }
+        return false; // Keine weiteren Abhängigkeiten möglich
+    }
+
+
+    //TODO:: Die Methode geht bestimmt schöner
+    public Process getSelectedProcessForDependenciesList(Networkplan networkplan, int nr) {
+        for (Process process : networkplan.getListOfProcesses()) {
+            if (process.getNr() == nr) {
+                return process;
+            }
+        }
+        return null;
     }
 
 
@@ -172,7 +182,6 @@ public class Logic {
 
 
 
-
     public String readString(String prompt) {
         System.out.print(prompt);
         scanner.nextLine(); // Leere Zeile lesen
@@ -203,78 +212,76 @@ public class Logic {
     }
 
 
-    public List<List<Process>> sortProcesses(Networkplan networkplan) {
-        List<List<Process>> sortedProcessesList = new ArrayList<>();
-        List<Process> addedProcess = new ArrayList<>();
-        int counter = 0;
-
-        for (Process process : networkplan.getListOfProcesses()) {
-            if (process.getNr() == 1) {
-                sortedProcessesList.add(List.of(process));
-                continue;
-            }
-
-            if (process.getDependencies() == null) {
-                addedProcess.add(process);
-            }
-
-            if (process.getDependencies() != null) {
-
-            }
-        }
-
-
-        for (int i = 0; i < networkplan.getListOfProcesses().size(); i++) {
-            Process process = networkplan.getListOfProcesses().get(i);
-
-            // Für die alle ohne Vorgänger in die erste Liste
-            if (process.getNr() == 1) {
-                for (Process processWithoutDependencies : networkplan.getListOfProcesses()) {
-                    if (processWithoutDependencies.getDependencies() == null) {
-                        addedProcess.add(processWithoutDependencies);
-                    }
-                }
-                sortedProcessesList.add(addedProcess);
-                addedProcess.clear();
-                continue;
-            }
-
-            // Überspringt alle ohne Vorgänger da sie in der ersten Liste sind
-            if (process.getDependencies() == null) {
-                continue;
-            }
-
-
-
-            //TODO:: hier prüfen ob dependencies in der addedProcess ist
-            if (process.getDependencies() == addedProcess.forEach(i -> i)) {
-                sortedProcessesList.add(addedProcess);
-                addedProcess.clear();
-                counter++;
-            }
-
-
-            // Prüft die nächsten Listen
-            if (process.getDependencies() != null) {
-
-                outer:
-                for (Process processesFromOldList : sortedProcessesList.get(counter)) {
-                    for (int indexOfDependencies : processesFromOldList.getDependencies()) {
-                        if (processesFromOldList.getNr() == indexOfDependencies) {
-                            addedProcess.add(process);
-                            break outer;
-                        }
-                    }
-                }
-            }
-
-        }
-
-
-        return sortedProcessesList;
-
-
-    }
+//    public List<List<Process>> sortProcesses(Networkplan networkplan) {
+//        List<List<Process>> sortedProcessesList = new ArrayList<>();
+//        List<Process> addedProcess = new ArrayList<>();
+//        int counter = 0;
+//
+//        for (Process process : networkplan.getListOfProcesses()) {
+//            if (process.getNr() == 1) {
+//                sortedProcessesList.add(List.of(process));
+//                continue;
+//            }
+//
+//            if (process.getDependencies() == null) {
+//                addedProcess.add(process);
+//            }
+//
+//            if (process.getDependencies() != null) {
+//
+//            }
+//        }
+//
+//
+//        for (int i = 0; i < networkplan.getListOfProcesses().size(); i++) {
+//            Process process = networkplan.getListOfProcesses().get(i);
+//
+//            // Für die alle ohne Vorgänger in die erste Liste
+//            if (process.getNr() == 1) {
+//                for (Process processWithoutDependencies : networkplan.getListOfProcesses()) {
+//                    if (processWithoutDependencies.getDependencies() == null) {
+//                        addedProcess.add(processWithoutDependencies);
+//                    }
+//                }
+//                sortedProcessesList.add(addedProcess);
+//                addedProcess.clear();
+//                continue;
+//            }
+//
+//            // Überspringt alle ohne Vorgänger da sie in der ersten Liste sind
+//            if (process.getDependencies() == null) {
+//                continue;
+//            }
+//
+//
+//
+////            //TODO:: hier prüfen ob dependencies in der addedProcess ist
+////            if (process.getDependencies() == addedProcess.forEach(stream -> stream)) {
+////                sortedProcessesList.add(addedProcess);
+////                addedProcess.clear();
+////                counter++;
+////            }
+//
+//
+//            // Prüft die nächsten Listen
+//            if (process.getDependencies() != null) {
+//
+//                outer:
+//                for (Process processesFromOldList : sortedProcessesList.get(counter)) {
+//                    for (int indexOfDependencies : processesFromOldList.getDependencies()) {
+//                        if (processesFromOldList.getNr() == indexOfDependencies) {
+//                            addedProcess.add(process);
+//                            break outer;
+//                        }
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//
+//        return sortedProcessesList;
+//    }
 
 
 
