@@ -292,7 +292,7 @@ public class UserInterface {
                     if (process.getNr() == 1) {
                         continue;
                     }
-                    if (process.getDependencies() != null) {
+                    if (process.getListOfDependencies() != null) {
                         if (!logic.deleteDependencies(process)) {
                             continue;
                         }

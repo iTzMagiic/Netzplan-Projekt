@@ -48,24 +48,14 @@ public class Logic {
         return false;
     }
 
-    // Hier wird ein Array aus ArrayList erstellt und zurückgegeben
-    public int[] getDependenciesArray(ArrayList<Integer> listOfDependencies) {
-        int[] dependenciesArray = new int[listOfDependencies.size()];
-        for (int i = 0; i < listOfDependencies.size(); i++) {
-            dependenciesArray[i] = listOfDependencies.get(i);
-        }
-        return dependenciesArray;
-    }
 
     public boolean deleteDependencies(Process process) {
         if (askYesOrNo("Möchten Sie alle Vorgänger löschen?")) {
-            //TODO:: Das new ArrayList<>() evtl. anders machen
             process.setDependencies(null);
             return true;
         }
         return false;
     }
-
 
 
     // Erstellt die Dependencies für die Processe
@@ -128,13 +118,22 @@ public class Logic {
 
             consoleClear();
 
-        } while (askYesOrNo("Möchten Sie ein weiteren Vorgänger hinzufügen?"));
+        } while (isMoreDependenciesAllowed(networkplan, process, listOfDependencies) && askYesOrNo("Möchten Sie ein weiteren Vorgänger hinzufügen?"));
         consoleClear();
 
         if (listOfDependencies.isEmpty()) {
             return;
         }
         process.setDependencies(listOfDependencies);
+    }
+
+    public boolean isMoreDependenciesAllowed(Networkplan networkplan, Process process, List<Process> listOfDependencies) {
+        for (Process checkProcess : networkplan.getListOfProcesses()) {
+            if (checkProcess.getNr() != process.getNr() && !listOfDependencies.contains(checkProcess) && checkProcess.getNr() < process.getNr()) {
+                return true; // Es gibt mindestens einen Prozess, der nicht in den Abhängigkeiten enthalten ist
+            }
+        }
+        return false; // Keine weiteren Abhängigkeiten möglich
     }
 
 
@@ -179,7 +178,6 @@ public class Logic {
 //        } while (askYesOrNo("Möchten Sie einen weiteren Knoten löschen?"));
 //        consoleClear();
 //    }
-
 
 
 

@@ -105,7 +105,7 @@ public class Process {
         return "Paket: " + nr;
     }
 
-    public List<Process> getDependencies() {
+    public List<Process> getListOfDependencies() {
         return listOfDependenciesProcesses;
     }
 
