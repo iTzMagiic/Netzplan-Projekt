@@ -110,7 +110,7 @@ public class UserInterface {
             int choice;
 
 
-            Process process = new Process(name, networkplan.getProcessCounter(), duration);
+            Process process = new Process(name, networkplan.incrementAndGetProcessCounter(), duration);
             logic.addProcessToNetworkplan(networkplan, process);
 
 
@@ -322,12 +322,13 @@ public class UserInterface {
 
 
     public void showNetworkplan(Networkplan networkplan) {
+        logic.startCalculate(networkplan);
         do {
             logic.consoleClear();
             System.out.println("Ausgewählter Netzplan : " + networkplan.toString() + "\n");
             if (!networkplan.getListOfProcesses().isEmpty()) {
                 for (Process process : networkplan.getListOfProcesses()) {
-                    System.out.println(process.getName());
+                    System.out.println(process.toString());
                 }
             } else {
                 System.out.println("Netzplan ist Leer.");
