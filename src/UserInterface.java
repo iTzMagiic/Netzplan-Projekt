@@ -110,7 +110,7 @@ public class UserInterface {
             int choice;
 
 
-            Process process = new Process(name, networkplan.getProcessCounter(), duration);
+            Process process = new Process(name, networkplan.incrementAndGetProcessCounter(), duration);
             logic.addProcessToNetworkplan(networkplan, process);
 
 

@@ -18,14 +18,10 @@ public class Networkplan {
     }
 
 
-    public int getProcessCounter() {
+    public int incrementAndGetProcessCounter() {
         processCounter++;
         return processCounter;
     }
-
-//    public void deleteOneProcess() {
-//        processCounter--;
-//    }
 
 
     // Fügt der Liste ein neuen vorgang hinzu

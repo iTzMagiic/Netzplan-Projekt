@@ -124,8 +124,10 @@ public class Logic {
         if (listOfDependencies.isEmpty()) {
             return;
         }
+        listOfDependencies.sort(Comparator.comparingInt(Process::getNr)); // Sortiert die Dependencies Liste nach der Process NR
         process.setDependencies(listOfDependencies);
     }
+
 
     public boolean isMoreDependenciesAllowed(Networkplan networkplan, Process process, List<Process> listOfDependencies) {
         for (Process checkProcess : networkplan.getListOfProcesses()) {
@@ -137,7 +139,6 @@ public class Logic {
     }
 
 
-    //TODO:: Die Methode geht bestimmt schöner
     public Process getSelectedProcessForDependenciesList(Networkplan networkplan, int nr) {
         for (Process process : networkplan.getListOfProcesses()) {
             if (process.getNr() == nr) {
@@ -178,7 +179,6 @@ public class Logic {
 //        } while (askYesOrNo("Möchten Sie einen weiteren Knoten löschen?"));
 //        consoleClear();
 //    }
-
 
 
 
