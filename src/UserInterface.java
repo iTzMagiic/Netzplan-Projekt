@@ -293,7 +293,7 @@ public class UserInterface {
                         continue;
                     }
                     if (process.getListOfDependencies() != null) {
-                        if (!logic.deleteDependencies(process)) {
+                        if (!logic.deleteDependenciesAndSuccessor(networkplan, process)) {
                             continue;
                         }
                         logic.consoleClear();
@@ -325,7 +325,7 @@ public class UserInterface {
         logic.startCalculate(networkplan);
         do {
             logic.consoleClear();
-            System.out.println("Ausgewählter Netzplan : " + networkplan.toString() + "\n");
+            System.out.println("Ausgewählter Netzplan : " + networkplan + "\n");
             if (!networkplan.getListOfProcesses().isEmpty()) {
                 for (Process process : networkplan.getListOfProcesses()) {
                     System.out.println(process.toString());

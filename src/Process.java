@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,6 +11,7 @@ public class Process {
     private int duration;
     private int faz, fez, saz, sez, fp, gp;
     private List<Process> listOfDependenciesProcesses;
+    private List<Process> listOfSuccessorsProcesses = new ArrayList<>();
 
 
     // Konstruktor
@@ -17,6 +19,23 @@ public class Process {
         this.name = name;
         this.duration = duration;
         this.nr = nr;
+    }
+
+    public void addSuccessor(Process process) {
+        listOfSuccessorsProcesses.add(process);
+    }
+
+    public void deleteSuccessor(Process process) {
+
+        listOfSuccessorsProcesses.removeIf(value -> value.getName().equals(process.getName()));
+    }
+
+    public List<Process> getListOfSuccessorsProcesses() {
+        return listOfSuccessorsProcesses;
+    }
+
+    public void setSuccessors(List<Process> newListOfSuccessorsProcesses) {
+        this.listOfSuccessorsProcesses = newListOfSuccessorsProcesses;
     }
 
 
