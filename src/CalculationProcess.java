@@ -16,20 +16,7 @@
 //    }
 //
 //
-//    public static void calculateFAZ(List<Process> listOFProcesses) {
-//        for (Process process : listOFProcesses) {
-//            if (process.getListOfDependencies() == null) {continue;}
-//
-//            int maxFEZ = 0;
-//
-//            for (Process predecessor : process.getListOfDependencies()) {
-//                if (predecessor.getFez() > maxFEZ) {
-//                    maxFEZ = predecessor.getFez();
-//                }
-//            }
-//            process.setFaz(maxFEZ);
-//        }
-//    }
+
 //
 //    public static void calculateFEZ(List<Process> listOFProcesses) {
 //        for (Process process : listOFProcesses) {
@@ -140,8 +127,8 @@ public class CalculationProcess {
             if (process.getListOfDependencies() == null) {
                 process.setFez(process.getDuration());
                 process.setFaz(0);
-                process.setSaz(process.getFaz());
-                process.setSez(process.getFez());
+                process.setSaz(0);
+                process.setSez(process.getDuration());
             }
         }
     }
@@ -155,6 +142,7 @@ public class CalculationProcess {
             int maxFEZ = 0;
 
             for (Process predecessor : process.getListOfDependencies()) {
+                calculateFEZ(listOFProcesses);
                 if (predecessor.getFez() > maxFEZ) {
                     maxFEZ = predecessor.getFez();
                 }
@@ -170,25 +158,6 @@ public class CalculationProcess {
         }
     }
 
-//    public static void calculateSEZ(List<Process> listOFProcesses) {
-//        for (int i = listOFProcesses.size() - 1; i >= 0; i--) {
-//            Process process = listOFProcesses.get(i);
-//
-//            if (i == listOFProcesses.size() - 1) {
-//                // Letzter Prozess: SEZ = FEZ
-//                process.setSez(process.getFez());
-//            } else {
-//                int minSAZ = Integer.MAX_VALUE;
-//
-//                for (Process successor : getSuccessors(listOFProcesses, process)) {
-//                    if (successor.getSaz() < minSAZ) {
-//                        minSAZ = successor.getSaz();
-//                    }
-//                }
-//                process.setSez(minSAZ);
-//            }
-//        }
-//    }
 
     public static void calculateSEZ(List<Process> listOFProcesses) {
         for (int i = listOFProcesses.size() - 1; i >= 0; i--) {
@@ -209,6 +178,26 @@ public class CalculationProcess {
                 // Kein Nachfolger: SEZ = FEZ
                 process.setSez(process.getFez());
             }
+        }
+    }
+
+    public static void calcSEZ(List<Process> listOFProcesses) {
+        for (Process process : listOFProcesses) {
+            if (process.getListOfDependencies() != null && process.getListOfSuccessorsProcesses() == null) {
+                process.setSez(process.getFez());
+            }
+
+            int minSAZ = Integer.MAX_VALUE;
+
+            if (process.getListOfSuccessorsProcesses() != null && process.getListOfDependencies() != null) {
+                for (Process successor : process.getListOfSuccessorsProcesses()) {
+                    if (successor.getSaz() < minSAZ) {
+                        minSAZ = successor.getSaz();
+                    }
+                }
+                process.setSez(minSAZ);
+            }
+
         }
     }
 
@@ -308,19 +297,18 @@ public class CalculationProcess {
                 .collect(Collectors.toList());
     }
 
+    public static int fezBerechnen(Process process) {
+        return (process.getDuration() + process.getFaz());
+    }
+
 
     // Methode, die alle Berechnungen in der richtigen Reihenfolge ausführt
     public static void calculateAll(List<Process> processes) {
         calculateStart(processes);
-
         calculateFAZ(processes);
         calculateFEZ(processes);
-//        calculateSEZ(processes);
-//        calculateSAZ(processes);
-        berechnenSZ(processes);
-        berechnenPuffer(processes);
-//        calculateFP(processes);
-//        calculateGP(processes);
+
+        calcSEZ(processes);
     }
 }
 

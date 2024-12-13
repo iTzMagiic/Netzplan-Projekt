@@ -49,12 +49,25 @@ public class Logic {
     }
 
 
-    public boolean deleteDependencies(Process process) {
+    public boolean deleteDependenciesAndSuccessor(Networkplan networkplan, Process process) {
         if (askYesOrNo("Möchten Sie alle Vorgänger löschen?")) {
             process.setDependencies(null);
+            searchMyDependencies(networkplan, process);
             return true;
         }
         return false;
+    }
+
+    public void searchMyDependencies(Networkplan networkplan, Process deleteProcess) {
+        for (Process process : networkplan.getListOfProcesses()) {
+            for (Process successor : process.getListOfSuccessorsProcesses()) {
+                if (successor.getNr() == deleteProcess.getNr()) {
+                    System.out.println("Ich bin " + process.getNr() + "Und lösche mein Vorgänger " + successor.getNr());
+                    process.deleteSuccessor(successor);
+                    break;
+                }
+            }
+        }
     }
 
 
@@ -125,7 +138,17 @@ public class Logic {
             return;
         }
         listOfDependencies.sort(Comparator.comparingInt(Process::getNr)); // Sortiert die Dependencies Liste nach der Process NR
+
+        setSuccessor(listOfDependencies, process);
+
         process.setDependencies(listOfDependencies);
+    }
+
+    public void setSuccessor(List<Process> listOfDependencies, Process successor) {
+        for (Process process : listOfDependencies) {
+            System.out.println("Ich bin " + process +" Und mein Nachfolger ist " + successor);
+            process.addSuccessor(successor);
+        }
     }
 
 
@@ -300,9 +323,7 @@ public class Logic {
 //        CalculationProcess.calculateGP(listOfProcesses);
 //
 //        CalculationProcess.calculateFP(listOfProcesses);
-
         CalculationProcess.calculateAll(listOfProcesses);
-
     }
 
 
