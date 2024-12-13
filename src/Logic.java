@@ -146,7 +146,6 @@ public class Logic {
 
     public void setSuccessor(List<Process> listOfDependencies, Process successor) {
         for (Process process : listOfDependencies) {
-            System.out.println("Ich bin " + process +" Und mein Nachfolger ist " + successor);
             process.addSuccessor(successor);
         }
     }
