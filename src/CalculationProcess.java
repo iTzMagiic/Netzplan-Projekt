@@ -45,7 +45,6 @@ public class CalculationProcess {
 
     public static void calcSEZ(List<Process> listOFProcesses) {
     for (int lastProcess = listOFProcesses.size() - 1; lastProcess >= 0; lastProcess--) {
-        System.out.println(lastProcess + " last -> index " + listOFProcesses.size());
         if (listOFProcesses.get(lastProcess).getListOfDependencies() != null &&
                 (listOFProcesses.get(lastProcess).getListOfSuccessors() == null || listOFProcesses.get(lastProcess).getListOfSuccessors().isEmpty())) {
             listOFProcesses.get(lastProcess).setSez(listOFProcesses.get(lastProcess).getFez());
@@ -107,14 +106,6 @@ public class CalculationProcess {
         }
         return listOfCriticalPath;
     }
-
-
-
-
-
-
-
-
 
 
     // Methode, die alle Berechnungen in der richtigen Reihenfolge ausführt

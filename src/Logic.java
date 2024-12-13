@@ -50,17 +50,17 @@ public class Logic {
     }
 
 
-    public boolean deleteAllDependenciesAndSuccessor(Networkplan networkplan, Process process) {
+    public boolean deleteAllDependenciesAndSuccessorFromProcess(Networkplan networkplan, Process process) {
         if (askYesOrNo("Möchten Sie alle Vorgänger löschen?")) {
             process.setDependencies(null);
-            deleteMeFromDependenciesList(networkplan, process);
+            deleteSelectedProcessFromAllDependenciesList(networkplan, process);
             return true;
         }
         return false;
     }
 
 
-    public void deleteMeFromDependenciesList(Networkplan networkplan, Process deleteProcess) {
+    public void deleteSelectedProcessFromAllDependenciesList(Networkplan networkplan, Process deleteProcess) {
         for (Process process : networkplan.getListOfProcesses()) {
             for (Process successor : process.getListOfSuccessors()) {
                 if (successor.getNr() == deleteProcess.getNr()) {
@@ -145,6 +145,7 @@ public class Logic {
         process.setDependencies(listOfDependencies);
     }
 
+
     public void setSuccessor(List<Process> listOfDependencies, Process successor) {
         for (Process process : listOfDependencies) {
             process.addSuccessor(successor);
@@ -178,6 +179,7 @@ public class Logic {
         return scanner.nextLine();
     }
 
+
     public int readInt(String prompt) {
         System.out.print(prompt);
         while (!scanner.hasNextInt()) {
@@ -187,6 +189,7 @@ public class Logic {
         return scanner.nextInt();
     }
 
+
     public boolean askYesOrNo(String message) {
         int choice;
         do {
@@ -195,12 +198,12 @@ public class Logic {
         return choice == 1;
     }
 
+
     public void consoleClear() {
         for (int i = 0; i < 10; i++) {
             System.out.println();
         }
     }
-
 
 
     public void startCalculate(Networkplan networkplan) {

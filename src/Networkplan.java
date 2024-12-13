@@ -18,6 +18,8 @@ public class Networkplan {
     }
 
 
+
+
     public int incrementAndGetProcessCounter() {
         processCounter++;
         return processCounter;
@@ -34,9 +36,11 @@ public class Networkplan {
         return listOfProcesses;
     }
 
+
     public String getName(){
         return name;
     }
+
 
     @Override
     public String toString() {

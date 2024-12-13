@@ -6,6 +6,7 @@ public class UserInterface {
     private Logic logic;
 
 
+
     public UserInterface(Logic logic) {
         this.logic = logic;
         this.scanner = new Scanner(System.in);
@@ -19,7 +20,7 @@ public class UserInterface {
         while (!cancel) {
             System.out.println("███    ██ ███████ ████████ ███████ ██████  ██       █████  ███    ██     ███████ ██████  ███████ ████████ ███████ ██      ██      ███████ ███    ██ \n" + "████   ██ ██         ██       ███  ██   ██ ██      ██   ██ ████   ██     ██      ██   ██ ██         ██    ██      ██      ██      ██      ████   ██ \n" + "██ ██  ██ █████      ██      ███   ██████  ██      ███████ ██ ██  ██     █████   ██████  ███████    ██    █████   ██      ██      █████   ██ ██  ██ \n" + "██  ██ ██ ██         ██     ███    ██      ██      ██   ██ ██  ██ ██     ██      ██   ██      ██    ██    ██      ██      ██      ██      ██  ██ ██ \n" + "██   ████ ███████    ██    ███████ ██      ███████ ██   ██ ██   ████     ███████ ██   ██ ███████    ██    ███████ ███████ ███████ ███████ ██   ████ \n" + "                                                                                                                                                    \n");
             if (NetworkplanList.isListEmpty()) {
-                cancel = createNetworkplan();
+                cancel = createNetworkplanMenu();
                 logic.consoleClear();
             } else {
                 showMainMenu();
@@ -28,10 +29,10 @@ public class UserInterface {
 
                 switch (choice) {
                     case 1:
-                        createNetworkplan();
+                        createNetworkplanMenu();
                         break;
                     case 2:
-                        showNetworkplanList();
+                        showAllNetworkplansMenu();
                         break;
                     case 0:
                         cancel = true;
@@ -53,7 +54,7 @@ public class UserInterface {
 
 
     // Gibt ein Boolean zurück, ob ein Netzplan erstellt worden ist oder ob beendet werden soll.
-    public boolean createNetworkplan() {
+    public boolean createNetworkplanMenu() {
         System.out.println("Willkommen");
         String name;
         do {    // Die Schleife wiederholt sich so lange bis was Eingegeben wurde.
@@ -74,13 +75,13 @@ public class UserInterface {
         System.out.println("Netzwerkplan wurde erstellt.");
 
         if (logic.askYesOrNo("Möchten Sie Knotenpunkte hinzufügen?")) {
-            createProcess(networkplan);
+            createProcessMenu(networkplan);
         }
         return false;
     }
 
     // Erstellt Processe für einen Netzplan
-    public void createProcess(Networkplan networkplan) {
+    public void createProcessMenu(Networkplan networkplan) {
         String name;
         int duration;
 
@@ -133,7 +134,7 @@ public class UserInterface {
 
 
     // Zeigt alle Vorhandenen Netzpläne an
-    public void showNetworkplanList() {
+    public void showAllNetworkplansMenu() {
         boolean cancel = false;
         logic.consoleClear();
 
@@ -156,14 +157,14 @@ public class UserInterface {
             } else if (choice <= NetworkplanList.getNetworkplan().size() && choice >= 0) {
                 logic.consoleClear();
                 choice--;
-                selectedNetworkplan(choice);
+                showSelectedNetworkplanMenu(choice);
             }
             logic.consoleClear();
         }
     }
 
 
-    public void selectedNetworkplan(int choice) {
+    public void showSelectedNetworkplanMenu(int choice) {
         int option;
         Networkplan networkplan = NetworkplanList.getNetworkplan().get(choice);
         do {
@@ -178,16 +179,16 @@ public class UserInterface {
 
             switch (option) {
                 case 1:
-                    showNetworkplan(networkplan);
+                    showSelectedNetworkplanMenu(networkplan);
                     continue;
                 case 2:
-                    showNetworkplanTable(networkplan);
+                    showSelectedNetworkplanTableMenu(networkplan);
                     continue;
                 case 3:
-                    createProcess(networkplan);
+                    createProcessMenu(networkplan);
                     continue;
                 case 4:
-                    showProcessesFromNetworkplan(networkplan);
+                    showProcessesFromSelectedNetworkplanMenu(networkplan);
                     continue;
                 case 5:
                     logic.consoleClear();
@@ -199,7 +200,7 @@ public class UserInterface {
     }
 
 
-    public void showProcessesFromNetworkplan(Networkplan networkplan) {
+    public void showProcessesFromSelectedNetworkplanMenu(Networkplan networkplan) {
         int choice;
         do {
             logic.consoleClear();
@@ -209,7 +210,7 @@ public class UserInterface {
                 choice = logic.readInt("\nKnoten erstellen? ('1' Ja? '2' Nein?) : ");
 
                 if (choice == 1) {
-                    createProcess(networkplan);
+                    createProcessMenu(networkplan);
                 } else if (choice == 2) {
                     break;
                 }
@@ -231,7 +232,7 @@ public class UserInterface {
 
                 if (choice > 0 && choice <= networkplan.getListOfProcesses().size()) {
                     choice--; // da Listen bei 0,1,2,3,4 anfangen
-                    editProcess(networkplan, networkplan.getListOfProcesses().get(choice));
+                    editProcessFromSelectedNetworkplanMenu(networkplan, networkplan.getListOfProcesses().get(choice));
                 }
             }
         } while (true);
@@ -240,7 +241,7 @@ public class UserInterface {
 
 
     // Ist zur Änderung eines Knotens da
-    public void editProcess(Networkplan networkplan, Process process) {
+    public void editProcessFromSelectedNetworkplanMenu(Networkplan networkplan, Process process) {
         int choice;
         do {
             while (true) {
@@ -293,7 +294,7 @@ public class UserInterface {
                         continue;
                     }
                     if (process.getListOfDependencies() != null) {
-                        if (!logic.deleteAllDependenciesAndSuccessor(networkplan, process)) {
+                        if (!logic.deleteAllDependenciesAndSuccessorFromProcess(networkplan, process)) {
                             continue;
                         }
                         logic.consoleClear();
@@ -307,7 +308,7 @@ public class UserInterface {
     }
 
 
-    public void showNetworkplanTable(Networkplan networkplan) {
+    public void showSelectedNetworkplanTableMenu(Networkplan networkplan) {
         do {
             logic.consoleClear();
             System.out.println("Ausgewählter Netzplan : " + networkplan.toString());
@@ -321,7 +322,7 @@ public class UserInterface {
     }
 
 
-    public void showNetworkplan(Networkplan networkplan) {
+    public void showSelectedNetworkplanMenu(Networkplan networkplan) {
         logic.startCalculate(networkplan);
         do {
             logic.consoleClear();
