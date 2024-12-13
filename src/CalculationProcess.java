@@ -137,9 +137,11 @@ public class CalculationProcess {
     public static void calculateStart(List<Process> listOfProcesses) {
         // Prüfen, ob jemand kein Vorgänger hat. Wenn ja, FAZ und FEZ setzen
         for (Process process : listOfProcesses) {
-            if (process.getListOfDependencies() == null || process.getListOfDependencies().isEmpty()) {
+            if (process.getListOfDependencies() == null) {
                 process.setFez(process.getDuration());
                 process.setFaz(0);
+                process.setSaz(process.getFaz());
+                process.setSez(process.getFez());
             }
         }
     }
@@ -163,6 +165,7 @@ public class CalculationProcess {
 
     public static void calculateFEZ(List<Process> listOFProcesses) {
         for (Process process : listOFProcesses) {
+            if (process.getListOfDependencies() == null) {continue;}
             process.setFez(process.getFaz() + process.getDuration());
         }
     }
@@ -190,6 +193,7 @@ public class CalculationProcess {
     public static void calculateSEZ(List<Process> listOFProcesses) {
         for (int i = listOFProcesses.size() - 1; i >= 0; i--) {
             Process process = listOFProcesses.get(i);
+            if (process.getListOfDependencies() == null) {continue;}
 
             // Prüfe Nachfolger
             List<Process> successors = getSuccessors(listOFProcesses, process);
@@ -211,6 +215,7 @@ public class CalculationProcess {
 
     public static void calculateSAZ(List<Process> listOFProcesses) {
         for (Process process : listOFProcesses) {
+            if (process.getListOfDependencies() == null) {continue;}
             process.setSaz(process.getSez() - process.getDuration());
         }
     }
@@ -223,18 +228,61 @@ public class CalculationProcess {
     }
 
 
+    // Methode, um spätesten Anfangszeitpunkt und spätesten Endzeitpunkt zu berechnen
+    public static void berechnenSZ(List<Process> arbeitspaketListe) {
+
+        Process letztesPaket = arbeitspaketListe.get(arbeitspaketListe.size() - 1);                                    // Initialisierung für das letzte Arbeitspaket
+        letztesPaket.setSez(letztesPaket.getFez());                                                                         // berechnet Sez des letzten APs
+        letztesPaket.setSaz(letztesPaket.getSez() - letztesPaket.getDuration());                                               // berechnet Saz des letzten APs
+
+        for (int i = arbeitspaketListe.size() - 2; i >= 0; i--) {                                                           // Berechnen von SEZ und SAZ für alle Arbeitspakete rückwärts
+            Process aktuellesPaket = arbeitspaketListe.get(i);
+            double minSez = Double.MAX_VALUE;
+
+            if (aktuellesPaket.getListOfDependencies() == null) {continue;}// setzt größtmöglichen double Wert
+
+            for (Process nachfolgerPaket : aktuellesPaket.getListOfDependencies()) {                                                    // Finden des kleinsten SAZ der Nachfolger
+                minSez = Math.min(minSez, nachfolgerPaket.getSaz());
+            }
+
+            if (minSez == Double.MAX_VALUE) {                                                                               // wenn minSez entspricht größtmöglichem double Wert -> minSez entspricht Fez des letzten APs
+                minSez = letztesPaket.getFez();
+            }
+            // kleinste Sez wird verwendet, um Saz des aktuellen APs zu berechnen
+            aktuellesPaket.setSez((int)minSez);
+            aktuellesPaket.setSaz((int)minSez - aktuellesPaket.getDuration());
+        }
+    }
 
 
+    public static void berechnenPuffer(List<Process> arbeitspaketListe) {
 
+        Process letztesPaket = arbeitspaketListe.get(arbeitspaketListe.size() - 1);                                   // Initialisierung des letzten Arbeitspakets
+        letztesPaket.setGp(0);                                                                                             // GP des letzten AP wird auf 0 gesetzt
+        letztesPaket.setFp(0);                                                                                             // FP des letzten AP wird auf 0 gesetzt
 
+        for (int i = arbeitspaketListe.size() - 1; i >= 0; i--) {                                                          // Schleife über die ArbeitspaketListe von hinten
+            Process aktuellesPaket = arbeitspaketListe.get(i);
 
+            aktuellesPaket.setGp(aktuellesPaket.getSaz() - aktuellesPaket.getFaz());                                       // Berechnung des gesamten Puffers (GP)
 
+            if (aktuellesPaket.getListOfDependencies() != null) {                                                               // Initialisierung des freien Puffers (FP)
+                double minFp = Double.MAX_VALUE;
 
+                for (Process nachfolgerPaket : aktuellesPaket.getListOfDependencies()) {                                               // Berechnung des freien Puffers (FP)
+                    double fpZwischen = nachfolgerPaket.getFaz() - aktuellesPaket.getFez();
 
+                    if (fpZwischen < minFp) {                                                                              // Aktualisieren des minimalen freien Puffers
+                        minFp = fpZwischen;
+                    }
+                }
 
-
-
-
+                aktuellesPaket.setFp((int)minFp);
+            } else {
+                aktuellesPaket.setFp(0);                                                                                   // Falls keine Nachfolger, setze den FP auf 0
+            }
+        }
+    }
 
     public static void calculateFP(List<Process> listOFProcesses) {
         for (Process process : listOFProcesses) {
@@ -264,12 +312,15 @@ public class CalculationProcess {
     // Methode, die alle Berechnungen in der richtigen Reihenfolge ausführt
     public static void calculateAll(List<Process> processes) {
         calculateStart(processes);
+
         calculateFAZ(processes);
         calculateFEZ(processes);
-        calculateSEZ(processes);
-        calculateSAZ(processes);
-        calculateFP(processes);
-        calculateGP(processes);
+//        calculateSEZ(processes);
+//        calculateSAZ(processes);
+        berechnenSZ(processes);
+        berechnenPuffer(processes);
+//        calculateFP(processes);
+//        calculateGP(processes);
     }
 }
 
