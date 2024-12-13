@@ -18,6 +18,8 @@ public class Networkplan {
     }
 
 
+
+
     public int incrementAndGetProcessCounter() {
         processCounter++;
         return processCounter;
@@ -30,17 +32,15 @@ public class Networkplan {
     }
 
 
-    public void overrideListOfProcesses(List<Process> newListOfProcesses) {
-        this.listOfProcesses = newListOfProcesses;
-    }
-
     public List<Process> getListOfProcesses() {
         return listOfProcesses;
     }
 
+
     public String getName(){
         return name;
     }
+
 
     @Override
     public String toString() {

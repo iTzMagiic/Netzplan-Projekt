@@ -30,7 +30,7 @@ public class Process {
         listOfSuccessorsProcesses.removeIf(value -> value.getName().equals(process.getName()));
     }
 
-    public List<Process> getListOfSuccessorsProcesses() {
+    public List<Process> getListOfSuccessors() {
         return listOfSuccessorsProcesses;
     }
 
@@ -130,10 +130,17 @@ public class Process {
 //                + "├─────────┬────────┬────────┬─────────┤" +
 //                String.format("│   %-5s │   %-4s │   %-4s │   %-5s │", getSaz(), getFp(), getGp(), getSez()) +
 //                "╰─────────┴────────┴────────┴─────────╯" };
-        return ("Nr : %d\t Name : %S\t Dauer : %d\n" +
-                "FAZ : %d\t GP : %d\t FEZ : %d\n" +
-                "SAZ : %d\t FP : %d\t SEZ : %d\n" +
-                "Vorgänger : %s\n\n").formatted(nr, name, duration, faz, gp, fez, saz, fp, sez, getDependenciesAsString());
+//        return ("Nr : %d\t Name : %S\t Dauer : %d\n" +
+//                "FAZ : %d\t GP : %d\t FEZ : %d\n" +
+//                "SAZ : %d\t FP : %d\t SEZ : %d\n" +
+//                "Vorgänger : %s\n\n").formatted(nr, name, duration, faz, gp, fez, saz, fp, sez, getDependenciesAsString());
+        return "╭────────────┬───────────┬────────────╮\n" +
+                String.format("│     %-6s │     %-5s │     %-6s │\n", getFaz(), getDuration(), getFez()) +
+                "├────────────┴───────────┴────────────┤\n" +
+                String.format("│ %-35s │\n", getName()) +
+                 "├─────────┬────────┬────────┬─────────┤\n" +
+                String.format("│   %-5s │   %-4s │   %-4s │   %-5s │\n", getSaz(), getFp(), getGp(), getSez()) +
+               "╰─────────┴────────┴────────┴─────────╯\n";
     }
 
     public List<Process> getListOfDependencies() {

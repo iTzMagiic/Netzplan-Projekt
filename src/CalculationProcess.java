@@ -1,5 +1,5 @@
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CalculationProcess {
 
@@ -43,12 +43,10 @@ public class CalculationProcess {
     }
 
 
-
     public static void calcSEZ(List<Process> listOFProcesses) {
     for (int lastProcess = listOFProcesses.size() - 1; lastProcess >= 0; lastProcess--) {
-        System.out.println(lastProcess + " last -> index " + listOFProcesses.size());
         if (listOFProcesses.get(lastProcess).getListOfDependencies() != null &&
-                (listOFProcesses.get(lastProcess).getListOfSuccessorsProcesses() == null || listOFProcesses.get(lastProcess).getListOfSuccessorsProcesses().isEmpty())) {
+                (listOFProcesses.get(lastProcess).getListOfSuccessors() == null || listOFProcesses.get(lastProcess).getListOfSuccessors().isEmpty())) {
             listOFProcesses.get(lastProcess).setSez(listOFProcesses.get(lastProcess).getFez());
             calcSAZ(listOFProcesses.get(lastProcess));
             continue;
@@ -56,7 +54,7 @@ public class CalculationProcess {
 
         int minSAZ = Integer.MAX_VALUE;
 
-        for (Process successor : listOFProcesses.get(lastProcess).getListOfSuccessorsProcesses()) {
+        for (Process successor : listOFProcesses.get(lastProcess).getListOfSuccessors()) {
 
             if (successor.getSaz() < minSAZ) {
                 minSAZ = successor.getSaz();
@@ -76,13 +74,38 @@ public class CalculationProcess {
 
 
     public static void calcGp(List<Process> listOFProcesses) {
-
+        for (Process process : listOFProcesses) {
+            process.setGp((process.getSez() - process.getFez()));
+        }
     }
 
 
+    public static void calcFp(List<Process> listOFProcesses) {
+        for (Process process : listOFProcesses) {
+
+            if (process.getListOfSuccessors() == null || process.getListOfSuccessors().isEmpty()) {process.setFp(process.getGp());continue;}
+            int minFP = Integer.MAX_VALUE;
+
+            for (Process successor : process.getListOfSuccessors()) {
+                if (successor.getFaz() < minFP) {
+                    minFP = successor.getFaz();
+                }
+            }
+            process.setFp(minFP - process.getFez());
+        }
+    }
 
 
+    public static List<Integer> getCalcCriticalPath(List<Process> listOFProcesses) {
+        List<Integer> listOfCriticalPath = new ArrayList<>();
 
+        for (Process process : listOFProcesses) {
+            if (process.getGp() == 0) {
+                listOfCriticalPath.add(process.getNr());
+            }
+        }
+        return listOfCriticalPath;
+    }
 
 
     // Methode, die alle Berechnungen in der richtigen Reihenfolge ausführt
@@ -90,8 +113,9 @@ public class CalculationProcess {
         calculateStart(processes);
         calculateFAZ(processes);
         calculateFEZ(processes);
-
         calcSEZ(processes);
+        calcGp(processes);
+        calcFp(processes);
     }
 }
 
