@@ -293,7 +293,7 @@ public class UserInterface {
                         continue;
                     }
                     if (process.getListOfDependencies() != null) {
-                        if (!logic.deleteDependenciesAndSuccessor(networkplan, process)) {
+                        if (!logic.deleteAllDependenciesAndSuccessor(networkplan, process)) {
                             continue;
                         }
                         logic.consoleClear();
@@ -313,7 +313,7 @@ public class UserInterface {
             System.out.println("Ausgewählter Netzplan : " + networkplan.toString());
             System.out.println("AP-Nr\tAP-Beschreibung\t\tDauer\tVorgänger");
             for (Process process : networkplan.getListOfProcesses()) {
-                System.out.printf("%d\t\t%S\t\t%d\t[%S]\n", process.getNr(), process.getName(), process.getDuration(), process.getDependenciesAsString());
+                System.out.printf("%d\t\t%S\t\t%d\t\t[%S]\n", process.getNr(), process.getName(), process.getDuration(), process.getDependenciesAsString());
 
             }
         } while (logic.readInt("'0' Zurück : ") != 0);
@@ -330,6 +330,12 @@ public class UserInterface {
                 for (Process process : networkplan.getListOfProcesses()) {
                     System.out.println(process.toString());
                 }
+                System.out.print("Der Kritische Pfad: ");
+                for (int criticalPathNumber : CalculationProcess.getCalcCriticalPath(networkplan.getListOfProcesses())) {
+                    System.out.print(criticalPathNumber + " ");
+                }
+                System.out.println();
+                System.out.println();
             } else {
                 System.out.println("Netzplan ist Leer.");
             }

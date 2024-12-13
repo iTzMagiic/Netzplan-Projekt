@@ -30,10 +30,6 @@ public class Networkplan {
     }
 
 
-    public void overrideListOfProcesses(List<Process> newListOfProcesses) {
-        this.listOfProcesses = newListOfProcesses;
-    }
-
     public List<Process> getListOfProcesses() {
         return listOfProcesses;
     }

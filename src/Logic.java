@@ -1,9 +1,10 @@
-
 import java.util.*;
 
 public class Logic {
 
     Scanner scanner;
+
+
 
     public Logic() {
         scanner = new Scanner(System.in);
@@ -49,20 +50,20 @@ public class Logic {
     }
 
 
-    public boolean deleteDependenciesAndSuccessor(Networkplan networkplan, Process process) {
+    public boolean deleteAllDependenciesAndSuccessor(Networkplan networkplan, Process process) {
         if (askYesOrNo("Möchten Sie alle Vorgänger löschen?")) {
             process.setDependencies(null);
-            searchMyDependencies(networkplan, process);
+            deleteMeFromDependenciesList(networkplan, process);
             return true;
         }
         return false;
     }
 
-    public void searchMyDependencies(Networkplan networkplan, Process deleteProcess) {
+
+    public void deleteMeFromDependenciesList(Networkplan networkplan, Process deleteProcess) {
         for (Process process : networkplan.getListOfProcesses()) {
-            for (Process successor : process.getListOfSuccessorsProcesses()) {
+            for (Process successor : process.getListOfSuccessors()) {
                 if (successor.getNr() == deleteProcess.getNr()) {
-                    System.out.println("Ich bin " + process.getNr() + "Und lösche mein Vorgänger " + successor.getNr());
                     process.deleteSuccessor(successor);
                     break;
                 }
@@ -171,39 +172,6 @@ public class Logic {
     }
 
 
-//    public void deleteProcess(Networkplan networkplan) {
-//        String toDeleteProcess;
-//        boolean isDeleted;
-//
-//        do {
-//            consoleClear();
-//            System.out.println("Ausgewählter Netzplan: " + networkplan.getName());
-//            System.out.println("Verfügbare Knotenpunkte:");
-//            for (Process process : networkplan.getListOfProcesses()) {
-//                System.out.println("- " + process.getName());
-//            }
-//
-//            toDeleteProcess = readString("\nGeben Sie den Namen des zu löschenden Knotenpunkts ein ('0' zum Abbrechen): ");
-//
-//
-//            // Versuchen, den Prozess zu löschen
-//            String finalToDeleteProcess = toDeleteProcess;
-//            isDeleted = networkplan.getListOfProcesses().removeIf(process -> process.getName().equals(finalToDeleteProcess));
-//
-//            if (isDeleted) {
-//                System.out.println("Der Knotenpunkt '" + toDeleteProcess + "' wurde erfolgreich gelöscht.\n");
-//            } else if (toDeleteProcess.length() == 1 && toDeleteProcess.charAt(0) == '0') {
-//                break;
-//            }else {
-//                System.out.println("Der eingegebene Knotenpunkt '" + toDeleteProcess + "' wurde nicht gefunden.\n");
-//            }
-//
-//        } while (askYesOrNo("Möchten Sie einen weiteren Knoten löschen?"));
-//        consoleClear();
-//    }
-
-
-
     public String readString(String prompt) {
         System.out.print(prompt);
         scanner.nextLine(); // Leere Zeile lesen
@@ -234,94 +202,10 @@ public class Logic {
     }
 
 
-//    public List<List<Process>> sortProcesses(Networkplan networkplan) {
-//        List<List<Process>> sortedProcessesList = new ArrayList<>();
-//        List<Process> addedProcess = new ArrayList<>();
-//        int counter = 0;
-//
-//        for (Process process : networkplan.getListOfProcesses()) {
-//            if (process.getNr() == 1) {
-//                sortedProcessesList.add(List.of(process));
-//                continue;
-//            }
-//
-//            if (process.getDependencies() == null) {
-//                addedProcess.add(process);
-//            }
-//
-//            if (process.getDependencies() != null) {
-//
-//            }
-//        }
-//
-//
-//        for (int i = 0; i < networkplan.getListOfProcesses().size(); i++) {
-//            Process process = networkplan.getListOfProcesses().get(i);
-//
-//            // Für die alle ohne Vorgänger in die erste Liste
-//            if (process.getNr() == 1) {
-//                for (Process processWithoutDependencies : networkplan.getListOfProcesses()) {
-//                    if (processWithoutDependencies.getDependencies() == null) {
-//                        addedProcess.add(processWithoutDependencies);
-//                    }
-//                }
-//                sortedProcessesList.add(addedProcess);
-//                addedProcess.clear();
-//                continue;
-//            }
-//
-//            // Überspringt alle ohne Vorgänger da sie in der ersten Liste sind
-//            if (process.getDependencies() == null) {
-//                continue;
-//            }
-//
-//
-//
-////            //TODO:: hier prüfen ob dependencies in der addedProcess ist
-////            if (process.getDependencies() == addedProcess.forEach(stream -> stream)) {
-////                sortedProcessesList.add(addedProcess);
-////                addedProcess.clear();
-////                counter++;
-////            }
-//
-//
-//            // Prüft die nächsten Listen
-//            if (process.getDependencies() != null) {
-//
-//                outer:
-//                for (Process processesFromOldList : sortedProcessesList.get(counter)) {
-//                    for (int indexOfDependencies : processesFromOldList.getDependencies()) {
-//                        if (processesFromOldList.getNr() == indexOfDependencies) {
-//                            addedProcess.add(process);
-//                            break outer;
-//                        }
-//                    }
-//                }
-//            }
-//
-//        }
-//
-//
-//        return sortedProcessesList;
-//    }
-
 
     public void startCalculate(Networkplan networkplan) {
         List<Process> listOfProcesses = networkplan.getListOfProcesses();
 
-//        CalculationProcess.calculateStart(listOfProcesses);
-//
-//        CalculationProcess.calculateFAZ(listOfProcesses);
-//
-//        CalculationProcess.calculateFEZ(listOfProcesses);
-//
-//        CalculationProcess.calculateSEZ(listOfProcesses);
-//
-//        CalculationProcess.calculateSAZ(listOfProcesses);
-//
-//        CalculationProcess.calculateGP(listOfProcesses);
-//
-//        CalculationProcess.calculateFP(listOfProcesses);
         CalculationProcess.calculateAll(listOfProcesses);
     }
 

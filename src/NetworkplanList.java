@@ -12,10 +12,6 @@ public class NetworkplanList {
         return listOfPlan;
     }
 
-    public static Networkplan getNetworkplanChoice(int index){
-        return listOfPlan.get(index);
-    }
-
     public static void addNetworkplan(Networkplan p) {
         listOfPlan.add(p);
     }
