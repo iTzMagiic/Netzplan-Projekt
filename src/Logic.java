@@ -146,6 +146,45 @@ public class Logic {
     }
 
 
+    public void editProcessDependencies(Networkplan networkplan, Process process) {
+        if (process.getNr() == 1) {
+            return;
+        }
+        if (process.getListOfDependencies() != null) {
+            if (!deleteAllDependenciesAndSuccessorFromProcess(networkplan, process)) {
+                return;
+            }
+            consoleClear();
+        }
+        addDependencies(networkplan, process);
+    }
+
+    public void editProcessDuration(Process process) {
+        while (true) {
+            consoleClear();
+            System.out.printf("Bearbeiten der Dauer : %d von dem Knoten : %S\n", process.getDuration(), process.getName());
+            int duration = readInt("Neue Dauer ('0' Zurück) : ");
+            if (duration == 0) {
+                break;
+            } else if (duration < 0) {
+                System.out.println("Bitte nur echte Angaben!");
+                continue;
+            }
+            process.setDuration(duration);
+            break;
+        }
+    }
+
+    public void editProcessName(Process process) {
+        System.out.printf("Bearbeiten des Namen von : %S\n", process.getName());
+        String name = readString("Neuer Name ('0' Zurück) : ");
+        if (name.length() == 1 && name.charAt(0) == '0') {
+            return;
+        }
+        process.setName(name);
+    }
+
+
     public void setSuccessor(List<Process> listOfDependencies, Process successor) {
         for (Process process : listOfDependencies) {
             process.addSuccessor(successor);
