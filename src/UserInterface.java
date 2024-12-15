@@ -2,16 +2,14 @@ import java.util.*;
 
 public class UserInterface {
 
-    private Scanner scanner;
-    private Logic logic;
-
+    private final Scanner scanner;
+    private final Logic logic;
 
 
     public UserInterface(Logic logic) {
         this.logic = logic;
         this.scanner = new Scanner(System.in);
     }
-
 
 
     public void menu() {
@@ -57,7 +55,7 @@ public class UserInterface {
     public boolean createNetworkplanMenu() {
         System.out.println("Willkommen");
         String name;
-        do {    // Die Schleife wiederholt sich so lange bis was Eingegeben wurde.
+        do {
             System.out.println("Falls Sie das Programm beenden möchten geben Sie '0' ein.");
             System.out.println("Bitte geben Sie den Namen des Netzplans ein: ");
             name = scanner.nextLine();
@@ -68,7 +66,6 @@ public class UserInterface {
             return true;
         }
 
-        // Erstellung des Netzplans
         Networkplan networkplan = logic.addNetworkplan(name);
 
         logic.consoleClear();
@@ -80,23 +77,23 @@ public class UserInterface {
         return false;
     }
 
-    // Erstellt Processe für einen Netzplan
+
     public void createProcessMenu(Networkplan networkplan) {
         String name;
         int duration;
 
         do {
             logic.consoleClear();
-            do {            // Namen des Knotenpunkts
+            do {
                 name = logic.readString("Bitte geben Sie den Namen des Knotenpunkts an ('0' zum Abbrechen): ");
             } while (name.isEmpty());
 
-            if (name.length() == 1 && name.charAt(0) == '0') { // Abbruch
+            if (name.length() == 1 && name.charAt(0) == '0') {
                 break;
             }
 
 
-            do {            // Dauer des Knotenpunkts
+            do {
                 logic.consoleClear();
                 System.out.printf("Knotenpunkt : %S\n\n", name);
                 duration = logic.readInt("Bitte geben Sie die Dauer an ('0' zum Abbrechen): ");
@@ -107,16 +104,14 @@ public class UserInterface {
                 break;
             }
 
-
             int choice;
-
 
             Process process = new Process(name, networkplan.incrementAndGetProcessCounter(), duration);
             logic.addProcessToNetworkplan(networkplan, process);
 
 
             if (logic.isAllowedToCreateDependencies(networkplan)) {
-                do {            // Einen Vorgänger angeben
+                do {
                     System.out.printf("Nr : %d\t Knotenpunkt : %s \tDauer : %d%n\n", process.getNr(), name, duration);
                     System.out.println("Möchten Sie ein Vorgänger hinzufügen?");
                     choice = logic.readInt("'1' Ja? '2' Nein? : ");
@@ -133,7 +128,6 @@ public class UserInterface {
     }
 
 
-    // Zeigt alle Vorhandenen Netzpläne an
     public void showAllNetworkplansMenu() {
         boolean cancel = false;
         logic.consoleClear();
@@ -204,44 +198,36 @@ public class UserInterface {
         int choice;
         do {
             logic.consoleClear();
-            // Falls keine Knoten erstellt wurden, abfrage, ob man welche erstellen möchte
             if (networkplan.getListOfProcesses().isEmpty()) {
                 System.out.println("Keine Knoten. Liste leer...");
-                choice = logic.readInt("\nKnoten erstellen? ('1' Ja? '2' Nein?) : ");
-
-                if (choice == 1) {
+                if (logic.askYesOrNo("\nKnoten erstellen?")) {
                     createProcessMenu(networkplan);
-                } else if (choice == 2) {
-                    break;
                 }
+                break;
+            }
 
-            } else {
-                System.out.println("Ausgewählter Netzplan : " + networkplan);
-                System.out.println("AP-Nr\tAP-Beschreibung\t\tDauer\tVorgänger");
+            System.out.println("Ausgewählter Netzplan : " + networkplan);
+            System.out.println("AP-Nr\tAP-Beschreibung\t\tDauer\tVorgänger");
 
-                for (Process process : networkplan.getListOfProcesses()) {
-                    System.out.printf("%d\t\t%S\t\t%d\t\t[%S]\n", process.getNr(), process.getName(), process.getDuration(), process.getDependenciesAsString());
-                }
+            for (Process process : networkplan.getListOfProcesses()) {
+                System.out.printf("%d\t\t%S\t\t%d\t\t[%S]\n", process.getNr(), process.getName(), process.getDuration(), process.getDependenciesAsString());
+            }
 
-                choice = logic.readInt("\nWählen Sie ein Knoten um ihn zu bearbeiten. ('0' Zurück) : ");
+            choice = logic.readInt("\nWählen Sie ein Knoten um ihn zu bearbeiten. ('0' Zurück) : ");
 
-                if (choice == 0) {
-                    break;
-                }
+            if (choice == 0) {
+                break;
+            }
 
-
-                if (choice > 0 && choice <= networkplan.getListOfProcesses().size()) {
-                    choice--; // da Listen bei 0,1,2,3,4 anfangen
-                    editProcessFromSelectedNetworkplanMenu(networkplan, networkplan.getListOfProcesses().get(choice));
-                }
+            if (choice > 0 && choice <= networkplan.getListOfProcesses().size()) {
+                choice--; // da Listen bei 0,1,2,3,4 anfangen
+                editProcessMenu(networkplan, networkplan.getListOfProcesses().get(choice));
             }
         } while (true);
         logic.consoleClear();
     }
 
-
-    // Ist zur Änderung eines Knotens da
-    public void editProcessFromSelectedNetworkplanMenu(Networkplan networkplan, Process process) {
+    public void editProcessMenu(Networkplan networkplan, Process process) {
         int choice;
         do {
             while (true) {
@@ -264,45 +250,17 @@ public class UserInterface {
                     break;
                 }
             }
-
             switch (choice) {
                 case 1:
-                    System.out.printf("Bearbeiten des Namen von : %S\n", process.getName());
-                    String name = logic.readString("Neuer Name ('0' Zurück) : ");
-                    if (name.length() == 1 && name.charAt(0) == '0') {
-                        continue;
-                    }
-                    process.setName(name);
+                    logic.editProcessName(process);
                     continue;
                 case 2:
-                    while (true) {
-                        logic.consoleClear();
-                        System.out.printf("Bearbeiten der Dauer : %d von dem Knoten : %S\n", process.getDuration(), process.getName());
-                        int duration = logic.readInt("Neue Dauer ('0' Zurück) : ");
-                        if (duration == 0) {
-                            break;
-                        } else if (duration < 0) {
-                            System.out.println("Bitte nur echte Angaben!");
-                            continue;
-                        }
-                        process.setDuration(duration);
-                        break;
-                    }
+                    logic.editProcessDuration(process);
                     continue;
                 case 3:
-                    if (process.getNr() == 1) {
-                        continue;
-                    }
-                    if (process.getListOfDependencies() != null) {
-                        if (!logic.deleteAllDependenciesAndSuccessorFromProcess(networkplan, process)) {
-                            continue;
-                        }
-                        logic.consoleClear();
-                    }
-                    logic.addDependencies(networkplan, process);
+                    logic.editProcessDependencies(networkplan, process);
                     continue;
             }
-            // Wenn 0 Eingegeben wirt springt er hier hin und beendet die Methode
             break;
         } while (true);
     }
@@ -343,7 +301,6 @@ public class UserInterface {
         } while (logic.readInt("'0' Zurück : ") != 0);
         logic.consoleClear();
     }
-
 
 
 }
