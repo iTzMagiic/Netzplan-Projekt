@@ -37,53 +37,58 @@ public class CalculationProcess {
 
     public static void calculateFEZ(List<Process> listOFProcesses) {
         for (Process process : listOFProcesses) {
-            if (process.getListOfDependencies() == null) {continue;}
+            if (process.getListOfDependencies() == null) {
+                continue;
+            }
             process.setFez(process.getFaz() + process.getDuration());
         }
     }
 
 
-    public static void calcSEZ(List<Process> listOFProcesses) {
-    for (int lastProcess = listOFProcesses.size() - 1; lastProcess >= 0; lastProcess--) {
-        if (listOFProcesses.get(lastProcess).getListOfDependencies() != null &&
-                (listOFProcesses.get(lastProcess).getListOfSuccessors() == null || listOFProcesses.get(lastProcess).getListOfSuccessors().isEmpty())) {
-            listOFProcesses.get(lastProcess).setSez(listOFProcesses.get(lastProcess).getFez());
-            calcSAZ(listOFProcesses.get(lastProcess));
-            continue;
-        }
-
-        int minSAZ = Integer.MAX_VALUE;
-
-        for (Process successor : listOFProcesses.get(lastProcess).getListOfSuccessors()) {
-
-            if (successor.getSaz() < minSAZ) {
-                minSAZ = successor.getSaz();
+    public static void calculateSEZ(List<Process> listOFProcesses) {
+        for (int lastProcess = listOFProcesses.size() - 1; lastProcess >= 0; lastProcess--) {
+            if (listOFProcesses.get(lastProcess).getListOfDependencies() != null &&
+                    (listOFProcesses.get(lastProcess).getListOfSuccessors() == null || listOFProcesses.get(lastProcess).getListOfSuccessors().isEmpty())) {
+                listOFProcesses.get(lastProcess).setSez(listOFProcesses.get(lastProcess).getFez());
+                calculateSAZ(listOFProcesses.get(lastProcess));
+                continue;
             }
 
+            int minSAZ = Integer.MAX_VALUE;
+
+            for (Process successor : listOFProcesses.get(lastProcess).getListOfSuccessors()) {
+
+                if (successor.getSaz() < minSAZ) {
+                    minSAZ = successor.getSaz();
+                }
+
+            }
+            listOFProcesses.get(lastProcess).setSez(minSAZ);
+            calculateSAZ(listOFProcesses.get(lastProcess));
         }
-        listOFProcesses.get(lastProcess).setSez(minSAZ);
-        calcSAZ(listOFProcesses.get(lastProcess));
+
     }
 
-}
 
-
-    public static void calcSAZ(Process process) {
+    public static void calculateSAZ(Process process) {
         process.setSaz(process.getSez() - process.getDuration());
     }
 
 
-    public static void calcGp(List<Process> listOFProcesses) {
+    public static void calculateGp(List<Process> listOFProcesses) {
         for (Process process : listOFProcesses) {
             process.setGp((process.getSez() - process.getFez()));
         }
     }
 
 
-    public static void calcFp(List<Process> listOFProcesses) {
+    public static void calculateFp(List<Process> listOFProcesses) {
         for (Process process : listOFProcesses) {
 
-            if (process.getListOfSuccessors() == null || process.getListOfSuccessors().isEmpty()) {process.setFp(process.getGp());continue;}
+            if (process.getListOfSuccessors() == null || process.getListOfSuccessors().isEmpty()) {
+                process.setFp(process.getGp());
+                continue;
+            }
             int minFP = Integer.MAX_VALUE;
 
             for (Process successor : process.getListOfSuccessors()) {
@@ -108,14 +113,13 @@ public class CalculationProcess {
     }
 
 
-    // Methode, die alle Berechnungen in der richtigen Reihenfolge ausführt
     public static void calculateAll(List<Process> processes) {
         calculateStart(processes);
         calculateFAZ(processes);
         calculateFEZ(processes);
-        calcSEZ(processes);
-        calcGp(processes);
-        calcFp(processes);
+        calculateSEZ(processes);
+        calculateGp(processes);
+        calculateFp(processes);
     }
 }
 

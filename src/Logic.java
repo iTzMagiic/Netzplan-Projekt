@@ -44,7 +44,7 @@ public class Logic {
 
     public boolean isDeletingAllDependenciesAndSuccessorFromProcess(Networkplan networkplan, Process process) {
         if (askYesOrNo("Möchten Sie alle Vorgänger löschen?")) {
-            process.setDependencies(null);
+            process.setDependencies(new ArrayList<>());
             deleteSelectedProcessFromAllDependenciesList(networkplan, process);
             return true;
         }
@@ -64,7 +64,6 @@ public class Logic {
     }
 
 
-    // Erstellt die Dependencies für die Processe
     public void addDependencies(Networkplan networkplan, Process process) {
         List<Process> listOfDependencies = new ArrayList<>(); // Liste für die Angegebenen Vorgänger
         int dependencie;
