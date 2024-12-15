@@ -4,29 +4,26 @@ import java.util.stream.Collectors;
 
 public class Process {
 
-    private static int counter;
-
     private String name;
-    private int nr;
+    private final int nr;
     private int duration;
     private int faz, fez, saz, sez, fp, gp;
-    private List<Process> listOfDependenciesProcesses;
-    private List<Process> listOfSuccessorsProcesses = new ArrayList<>();
+    private List<Process> listOfDependenciesProcesses = new ArrayList<>();
+    private final List<Process> listOfSuccessorsProcesses = new ArrayList<>();
 
 
-    // Konstruktor
     public Process(String name, int nr, int duration) {
         this.name = name;
         this.duration = duration;
         this.nr = nr;
     }
 
+
     public void addSuccessor(Process process) {
         listOfSuccessorsProcesses.add(process);
     }
 
     public void deleteSuccessor(Process process) {
-
         listOfSuccessorsProcesses.removeIf(value -> value.getName().equals(process.getName()));
     }
 
@@ -34,17 +31,11 @@ public class Process {
         return listOfSuccessorsProcesses;
     }
 
-    public void setSuccessors(List<Process> newListOfSuccessorsProcesses) {
-        this.listOfSuccessorsProcesses = newListOfSuccessorsProcesses;
-    }
-
-
     public void setDependencies(List<Process> dependenciesProcess) {
         this.listOfDependenciesProcesses = dependenciesProcess;
     }
 
     public String getDependenciesAsString() {
-        // Wandelt die Liste der Dependencies in einen String um
         if (listOfDependenciesProcesses != null) {
             return listOfDependenciesProcesses.stream()
                     .map(dependency -> String.valueOf(dependency.getNr())) // Nr als String umwandeln
@@ -53,8 +44,6 @@ public class Process {
         return "Keine Vorgänger";
     }
 
-
-    // Getter & Setter
     public String getName() {
         return name;
     }
@@ -121,26 +110,13 @@ public class Process {
 
     @Override
     public String toString() {
-//        String[] frame = {"╭────────────┬───────────┬────────────╮" +
-//                String.format("│     %-6s │     %-5s │     %-6s │", getFaz(), getDuration(), getFez()) +
-//                "├────────────┴───────────┴────────────┤" +
-//                "│                                     │" +
-//                String.format("│ %-35s │", getName()) +
-//                "│                                     │"
-//                + "├─────────┬────────┬────────┬─────────┤" +
-//                String.format("│   %-5s │   %-4s │   %-4s │   %-5s │", getSaz(), getFp(), getGp(), getSez()) +
-//                "╰─────────┴────────┴────────┴─────────╯" };
-//        return ("Nr : %d\t Name : %S\t Dauer : %d\n" +
-//                "FAZ : %d\t GP : %d\t FEZ : %d\n" +
-//                "SAZ : %d\t FP : %d\t SEZ : %d\n" +
-//                "Vorgänger : %s\n\n").formatted(nr, name, duration, faz, gp, fez, saz, fp, sez, getDependenciesAsString());
         return "╭────────────┬───────────┬────────────╮\n" +
                 String.format("│     %-6s │     %-5s │     %-6s │\n", getFaz(), getDuration(), getFez()) +
                 "├────────────┴───────────┴────────────┤\n" +
                 String.format("│ %-35s │\n", getName()) +
-                 "├─────────┬────────┬────────┬─────────┤\n" +
+                "├─────────┬────────┬────────┬─────────┤\n" +
                 String.format("│   %-5s │   %-4s │   %-4s │   %-5s │\n", getSaz(), getFp(), getGp(), getSez()) +
-               "╰─────────┴────────┴────────┴─────────╯\n";
+                "╰─────────┴────────┴────────┴─────────╯\n";
     }
 
     public List<Process> getListOfDependencies() {
@@ -149,9 +125,5 @@ public class Process {
 
     public int getNr() {
         return nr;
-    }
-
-    public void setNr(int nr) {
-        this.nr = nr;
     }
 }

@@ -236,8 +236,9 @@ public class UserInterface {
 
                 System.out.println("'1' Namen ändern");
                 System.out.println("'2' Dauer ändern");
+
+                // Knoten 1 kann keine Vorgänger haben
                 if (process.getNr() != 1) {
-                    // Knoten 1 kann keine Vorgänger haben
                     System.out.println("'3' Vorgänger ändern");
                 }
                 choice = logic.readInt("Eingabe ('0' Zurück) : ");

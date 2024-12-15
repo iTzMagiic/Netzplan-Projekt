@@ -3,12 +3,14 @@ import java.util.List;
 
 public class NetworkplanList {
 
-    private static List<Networkplan> listOfPlan = new ArrayList<>();
+    private static final List<Networkplan> listOfPlan = new ArrayList<>();
 
 
-    private NetworkplanList() {}
+    private NetworkplanList() {
+    }
 
-    public static List<Networkplan> getNetworkplan(){
+
+    public static List<Networkplan> getNetworkplan() {
         return listOfPlan;
     }
 
@@ -17,7 +19,7 @@ public class NetworkplanList {
     }
 
     public static boolean isListEmpty() {
-        return listOfPlan == null || listOfPlan.isEmpty();
+        return listOfPlan.isEmpty();
     }
 
 }

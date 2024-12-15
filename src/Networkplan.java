@@ -3,21 +3,14 @@ import java.util.List;
 
 public class Networkplan {
 
-    private String name;
+    private final String name;
     private int processCounter;
-    private List<Process> listOfProcesses;
+    private final List<Process> listOfProcesses = new ArrayList<>();
 
 
-
-    // Konstruktor
     public Networkplan(String name) {
         this.name = name;
-
-        // Jeder neuer Netzplan erstellt seine eigene Liste
-        listOfProcesses = new ArrayList<>();
     }
-
-
 
 
     public int incrementAndGetProcessCounter() {
@@ -25,22 +18,17 @@ public class Networkplan {
         return processCounter;
     }
 
-
-    // Fügt der Liste ein neuen vorgang hinzu
     public void addProcess(Process process) {
         listOfProcesses.add(process);
     }
-
 
     public List<Process> getListOfProcesses() {
         return listOfProcesses;
     }
 
-
-    public String getName(){
+    public String getName() {
         return name;
     }
-
 
     @Override
     public String toString() {

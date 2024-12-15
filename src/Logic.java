@@ -5,15 +5,11 @@ public class Logic {
     Scanner scanner;
 
 
-
     public Logic() {
         scanner = new Scanner(System.in);
     }
 
 
-
-    // Erstellt ein Netzplan, fügt es in die Liste der Static Klasse NetworkplanList
-    // und gibt das Objekt zurück.
     public Networkplan addNetworkplan(String name) {
         Networkplan networkplan = new Networkplan(name);
         NetworkplanList.addNetworkplan(networkplan);
@@ -21,16 +17,13 @@ public class Logic {
     }
 
 
-    // Fügt ein Vorgang zu einem bestimmten Netzplan hinzu
     public void addProcessToNetworkplan(Networkplan networkplan, Process process) {
         networkplan.addProcess(process);
     }
 
 
-    // Die Methode prüft, ob man überhaupt vorgänger haben kann, wenn nein dann kann man auch keine erstellen.
     public boolean isAllowedToCreateDependencies(Networkplan networkplan) {
         for (Process process : networkplan.getListOfProcesses()) {
-            // Wenn mehr als 1 Knoten existiert dann True
             if (process.getNr() > 1) {
                 return true;
             }
@@ -39,7 +32,6 @@ public class Logic {
     }
 
 
-    // Prüft, ob der Vorgänger auch wirklich existiert
     public boolean isCorrectDependencies(Networkplan networkplan, int nr) {
         for (Process process : networkplan.getListOfProcesses()) {
             if (process.getNr() == nr) {
@@ -50,9 +42,9 @@ public class Logic {
     }
 
 
-    public boolean deleteAllDependenciesAndSuccessorFromProcess(Networkplan networkplan, Process process) {
+    public boolean isDeletingAllDependenciesAndSuccessorFromProcess(Networkplan networkplan, Process process) {
         if (askYesOrNo("Möchten Sie alle Vorgänger löschen?")) {
-            process.setDependencies(null);
+            process.setDependencies(new ArrayList<>());
             deleteSelectedProcessFromAllDependenciesList(networkplan, process);
             return true;
         }
@@ -72,7 +64,6 @@ public class Logic {
     }
 
 
-    // Erstellt die Dependencies für die Processe
     public void addDependencies(Networkplan networkplan, Process process) {
         List<Process> listOfDependencies = new ArrayList<>(); // Liste für die Angegebenen Vorgänger
         int dependencie;
@@ -104,7 +95,6 @@ public class Logic {
                     continue;
                 }
 
-                // Prüft, ob ein existierender Vorgänger angegeben wurde und nicht er selbst
                 if (dependencie != 0 && !isCorrectDependencies(networkplan, dependencie)) {
                     consoleClear();
                     System.out.println("Bitte nur ein Existierenden Vorgänge angeben!");
@@ -112,9 +102,7 @@ public class Logic {
                     continue;
                 }
 
-
-                // Prüft, ob er die gleichen Vorgänger angibt
-                if (listOfDependencies.contains(getSelectedProcessForDependenciesList(networkplan , dependencie))) {
+                if (listOfDependencies.contains(getSelectedProcessForDependenciesList(networkplan, dependencie))) {
                     consoleClear();
                     System.out.println("Bitte nicht den gleichen Vorgänger angeben!");
                     dependencie = -1;   // damit die Schleife wiederholt wird
@@ -127,7 +115,6 @@ public class Logic {
                 break;
             } // 0 == Abbrechen
 
-            // Vorgänger in ein ArrayList packen
             listOfDependencies.add(getSelectedProcessForDependenciesList(networkplan, dependencie));
 
             consoleClear();
@@ -138,7 +125,7 @@ public class Logic {
         if (listOfDependencies.isEmpty()) {
             return;
         }
-        listOfDependencies.sort(Comparator.comparingInt(Process::getNr)); // Sortiert die Dependencies Liste nach der Process NR
+        listOfDependencies.sort(Comparator.comparingInt(Process::getNr));
 
         setSuccessor(listOfDependencies, process);
 
@@ -151,7 +138,7 @@ public class Logic {
             return;
         }
         if (process.getListOfDependencies() != null) {
-            if (!deleteAllDependenciesAndSuccessorFromProcess(networkplan, process)) {
+            if (!isDeletingAllDependenciesAndSuccessorFromProcess(networkplan, process)) {
                 return;
             }
             consoleClear();
@@ -195,10 +182,10 @@ public class Logic {
     public boolean isMoreDependenciesAllowed(Networkplan networkplan, Process process, List<Process> listOfDependencies) {
         for (Process checkProcess : networkplan.getListOfProcesses()) {
             if (checkProcess.getNr() != process.getNr() && !listOfDependencies.contains(checkProcess) && checkProcess.getNr() < process.getNr()) {
-                return true; // Es gibt mindestens einen Prozess, der nicht in den Abhängigkeiten enthalten ist
+                return true;
             }
         }
-        return false; // Keine weiteren Abhängigkeiten möglich
+        return false;
     }
 
 
@@ -214,7 +201,7 @@ public class Logic {
 
     public String readString(String prompt) {
         System.out.print(prompt);
-        scanner.nextLine(); // Leere Zeile lesen
+        scanner.nextLine();
         return scanner.nextLine();
     }
 
@@ -250,7 +237,6 @@ public class Logic {
 
         CalculationProcess.calculateAll(listOfProcesses);
     }
-
 
 
 }
