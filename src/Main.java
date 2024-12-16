@@ -4,7 +4,6 @@ public class Main {
         Logic logic = new Logic();
         UserInterface userInterface = new UserInterface(logic);
 
-
         userInterface.menu();
     }
 }
