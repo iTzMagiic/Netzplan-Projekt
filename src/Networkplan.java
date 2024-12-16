@@ -5,15 +5,28 @@ public class Networkplan {
 
     private final String name;
     private int processCounter;
-    private final List<Process> listOfProcesses = new ArrayList<>();
+    private final int networkplanID;
+    private List<Process> listOfProcesses = new ArrayList<>();
 
 
-    public Networkplan(String name) {
+    public Networkplan(String name, int networkplanID) {
         this.name = name;
+        this.networkplanID = networkplanID;
+    }
+
+
+    public int getNetworkplanID() {
+        return networkplanID;
     }
 
 
     public int incrementAndGetProcessCounter() {
+        processCounter = 0;
+        for (Process process : listOfProcesses) {
+            if (process.getNr() > processCounter) {
+                processCounter = process.getNr();
+            }
+        }
         processCounter++;
         return processCounter;
     }
@@ -24,6 +37,10 @@ public class Networkplan {
 
     public List<Process> getListOfProcesses() {
         return listOfProcesses;
+    }
+
+    public void setListOfProcesses(List<Process> listOfProcesses) {
+        this.listOfProcesses = listOfProcesses;
     }
 
     public String getName() {

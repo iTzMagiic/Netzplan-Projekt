@@ -15,6 +15,7 @@ public class UserInterface {
     public void menu() {
         boolean cancel = false;
 
+        loginMenu();
         while (!cancel) {
             System.out.println("███    ██ ███████ ████████ ███████ ██████  ██       █████  ███    ██     ███████ ██████  ███████ ████████ ███████ ██      ██      ███████ ███    ██ \n" + "████   ██ ██         ██       ███  ██   ██ ██      ██   ██ ████   ██     ██      ██   ██ ██         ██    ██      ██      ██      ██      ████   ██ \n" + "██ ██  ██ █████      ██      ███   ██████  ██      ███████ ██ ██  ██     █████   ██████  ███████    ██    █████   ██      ██      █████   ██ ██  ██ \n" + "██  ██ ██ ██         ██     ███    ██      ██      ██   ██ ██  ██ ██     ██      ██   ██      ██    ██    ██      ██      ██      ██      ██  ██ ██ \n" + "██   ████ ███████    ██    ███████ ██      ███████ ██   ██ ██   ████     ███████ ██   ██ ███████    ██    ███████ ███████ ███████ ███████ ██   ████ \n" + "                                                                                                                                                    \n");
             if (NetworkplanList.isListEmpty()) {
@@ -34,11 +35,24 @@ public class UserInterface {
                         break;
                     case 0:
                         cancel = true;
+                        UserSession.getUserSession().clearSession();
                         break;
                 }
             }
         }
         System.out.println("\nDas Programm wird Beendet....");
+    }
+
+    public void loginMenu() {
+        boolean isExistUser;
+        do {
+            String username = logic.readString("Benutzername: ");
+            String password = logic.readString("Passwort: ");
+            System.out.println(username + " " + password);
+            isExistUser = logic.loginToDatabase(username, password);
+            logic.consoleClear();
+        } while (!isExistUser);
+
     }
 
 
@@ -106,8 +120,8 @@ public class UserInterface {
 
             int choice;
 
-            Process process = new Process(name, networkplan.incrementAndGetProcessCounter(), duration);
-            logic.addProcessToNetworkplan(networkplan, process);
+
+            Process process = logic.createProcess(networkplan, name, networkplan.incrementAndGetProcessCounter(), duration);
 
 
             if (logic.isAllowedToCreateDependencies(networkplan)) {
@@ -167,7 +181,8 @@ public class UserInterface {
             System.out.println("'2' Tabelle ausgeben");
             System.out.println("'3' Neuen Knoten hinzufügen");
             System.out.println("'4' Knoten Anzeigen/-Bearbeiten");
-            System.out.println("'5' Anderen Netzplan wählen");
+            System.out.println("'5' Netzplan löschen");
+            System.out.println("'6' Anderen Netzplan wählen");
             System.out.println("'0' Abbrechen");
             option = logic.readInt("Eingabe : ");
 
@@ -185,6 +200,12 @@ public class UserInterface {
                     showProcessesFromSelectedNetworkplanMenu(networkplan);
                     continue;
                 case 5:
+                    if (!logic.askYesOrNo("Möchten Sie den Netzplan wirklich löschen?")) {
+                        continue;
+                    }
+                    logic.deleteNetworkplan(networkplan);
+                    return;
+                case 6:
                     logic.consoleClear();
                     return;
             }

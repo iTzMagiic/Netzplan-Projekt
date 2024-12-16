@@ -6,16 +6,18 @@ public class Process {
 
     private String name;
     private final int nr;
+    private final int processID;
     private int duration;
     private int faz, fez, saz, sez, fp, gp;
     private List<Process> listOfDependenciesProcesses = new ArrayList<>();
-    private final List<Process> listOfSuccessorsProcesses = new ArrayList<>();
+    private List<Process> listOfSuccessorsProcesses = new ArrayList<>();
 
 
-    public Process(String name, int nr, int duration) {
+    public Process(String name, int nr, int duration, int processID) {
         this.name = name;
         this.duration = duration;
         this.nr = nr;
+        this.processID = processID;
     }
 
 
@@ -33,6 +35,10 @@ public class Process {
 
     public void setDependencies(List<Process> dependenciesProcess) {
         this.listOfDependenciesProcesses = dependenciesProcess;
+    }
+
+    public void setSuccessors(List<Process> newSuccessors) {
+        this.listOfSuccessorsProcesses = newSuccessors;
     }
 
     public String getDependenciesAsString() {
@@ -54,6 +60,10 @@ public class Process {
 
     public int getDuration() {
         return duration;
+    }
+
+    public int getProcessID() {
+        return processID;
     }
 
     public void setDuration(int duration) {

@@ -3,7 +3,7 @@ import java.util.List;
 
 public class NetworkplanList {
 
-    private static final List<Networkplan> listOfPlan = new ArrayList<>();
+    private static List<Networkplan> listOfPlan = new ArrayList<>();
 
 
     private NetworkplanList() {
@@ -20,6 +20,10 @@ public class NetworkplanList {
 
     public static boolean isListEmpty() {
         return listOfPlan.isEmpty();
+    }
+
+    public static void setNetworkplanList(List<Networkplan> newListOfNetworkplans) {
+        listOfPlan = newListOfNetworkplans;
     }
 
 }

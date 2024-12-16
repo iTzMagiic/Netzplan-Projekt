@@ -3,16 +3,91 @@ import java.util.*;
 public class Logic {
 
     Scanner scanner;
+    Database database;
+    UserSession userSession;
 
 
     public Logic() {
         scanner = new Scanner(System.in);
+        userSession = UserSession.getUserSession();
+        database = new Database();
+    }
+
+    public void loadAllObjects() {
+        NetworkplanList.setNetworkplanList(database.getAllNetworkplans(userSession.getUserID()));
+        List<Process> listOfProcesses;
+
+        if (NetworkplanList.getNetworkplan() == null) {return;}
+
+        // Lädt alle Knoten in ein Netzplan, falls vorhanden
+        for (Networkplan networkplan : NetworkplanList.getNetworkplan()) {
+            listOfProcesses = database.getAllProcesses(networkplan.getNetworkplanID());
+
+            if (listOfProcesses == null) {continue;}
+
+            networkplan.setListOfProcesses(listOfProcesses);
+
+            for (Process process : listOfProcesses) {
+                List<Integer> listOfDependenciesInteger = database.getAllDependencies(process.getProcessID());
+                if (listOfDependenciesInteger == null) {continue;}
+
+                List<Process> listOfDependenciesProcesses = new ArrayList<>();
+
+                for (Integer dependency : listOfDependenciesInteger) {
+                    // Suche den Prozess in networkplan.getListOfProcesses()
+                    networkplan.getListOfProcesses().stream()
+                            .filter(p -> p.getProcessID() == dependency)
+                            .findFirst() // Hole den ersten passenden Prozess, falls vorhanden
+                            .ifPresent(listOfDependenciesProcesses::add); // Füge ihn zur Liste hinzu, falls er existiert
+                }
+                process.setDependencies(listOfDependenciesProcesses);
+            }
+
+            for (Process process : listOfProcesses) {
+                List<Integer> listOfSuccessorInteger = database.getAllSuccessor(process.getProcessID());
+                if (listOfSuccessorInteger == null) {continue;}
+
+                List<Process> listOfSuccessorProcesses = new ArrayList<>();
+
+                for (Integer successor : listOfSuccessorInteger) {
+                    networkplan.getListOfProcesses().stream()
+                            .filter(p -> p.getProcessID() == successor)
+                            .findFirst() // Hole den ersten passenden Prozess, falls vorhanden
+                            .ifPresent(listOfSuccessorProcesses::add); // Füge ihn zur Liste hinzu, falls er existiert
+                }
+                process.setSuccessors(listOfSuccessorProcesses);
+            }
+        }
+
+
+
+
+    }
+
+    public void deleteNetworkplan(Networkplan networkplan) {
+        database.deleteNetworkplanFromDatabase(networkplan.getNetworkplanID());
+        NetworkplanList.getNetworkplan().removeIf(networkplanSearching -> networkplanSearching.getNetworkplanID() == networkplan.getNetworkplanID());
+    }
+
+    public boolean loginToDatabase(String username, String password) {
+        int userID = database.getUserID(username, password);
+
+        if (userID == -1) {return false;}
+
+        userSession = UserSession.getUserSession();
+        userSession.setUserID(userID);
+        loadAllObjects();
+        return true;
     }
 
 
-    public Networkplan addNetworkplan(String name) {
-        Networkplan networkplan = new Networkplan(name);
+    public Networkplan addNetworkplan(String networkplanName) {
+        database.createNetworkplan(userSession.getUserID(), networkplanName);
+        int networkplanID = database.getNetwokrplanID(userSession.getUserID(), networkplanName);
+
+        Networkplan networkplan = new Networkplan(networkplanName, networkplanID);
         NetworkplanList.addNetworkplan(networkplan);
+
         return networkplan;
     }
 
@@ -20,6 +95,17 @@ public class Logic {
     public void addProcessToNetworkplan(Networkplan networkplan, Process process) {
         networkplan.addProcess(process);
     }
+
+    public Process createProcess(Networkplan networkplan, String processName, int processNumber, int duration) {
+        database.addProcessToNetworkplan(networkplan.getNetworkplanID(), processName, duration, processNumber);
+        int processID = database.getProcessID(networkplan.getNetworkplanID(), processName);
+
+        Process process = new Process (processName, processNumber, duration, processID);
+        networkplan.addProcess(process);
+        return process;
+    }
+
+
 
 
     public boolean isAllowedToCreateDependencies(Networkplan networkplan) {
@@ -45,6 +131,7 @@ public class Logic {
     public boolean isDeletingAllDependenciesAndSuccessorFromProcess(Networkplan networkplan, Process process) {
         if (askYesOrNo("Möchten Sie alle Vorgänger löschen?")) {
             process.setDependencies(new ArrayList<>());
+            database.deleteDependencies(process.getProcessID());
             deleteSelectedProcessFromAllDependenciesList(networkplan, process);
             return true;
         }
@@ -57,6 +144,7 @@ public class Logic {
             for (Process successor : process.getListOfSuccessors()) {
                 if (successor.getNr() == deleteProcess.getNr()) {
                     process.deleteSuccessor(successor);
+                    database.deleteSelectedProcessFromSuccessor(process.getProcessID(), successor.getProcessID());
                     break;
                 }
             }
@@ -117,6 +205,7 @@ public class Logic {
 
             listOfDependencies.add(getSelectedProcessForDependenciesList(networkplan, dependencie));
 
+
             consoleClear();
 
         } while (isMoreDependenciesAllowed(networkplan, process, listOfDependencies) && askYesOrNo("Möchten Sie ein weiteren Vorgänger hinzufügen?"));
@@ -130,6 +219,9 @@ public class Logic {
         setSuccessor(listOfDependencies, process);
 
         process.setDependencies(listOfDependencies);
+        for (Process dependency : process.getListOfDependencies()) {
+            database.addDependenciesToProcess(process.getProcessID(), dependency.getProcessID());
+        }
     }
 
 
@@ -150,31 +242,34 @@ public class Logic {
         while (true) {
             consoleClear();
             System.out.printf("Bearbeiten der Dauer : %d von dem Knoten : %S\n", process.getDuration(), process.getName());
-            int duration = readInt("Neue Dauer ('0' Zurück) : ");
-            if (duration == 0) {
+            int newDuration = readInt("Neue Dauer ('0' Zurück) : ");
+            if (newDuration == 0) {
                 break;
-            } else if (duration < 0) {
+            } else if (newDuration < 0) {
                 System.out.println("Bitte nur echte Angaben!");
                 continue;
             }
-            process.setDuration(duration);
+            process.setDuration(newDuration);
+            database.changeProcessDuration(process.getProcessID(), newDuration);
             break;
         }
     }
 
     public void editProcessName(Process process) {
         System.out.printf("Bearbeiten des Namen von : %S\n", process.getName());
-        String name = readString("Neuer Name ('0' Zurück) : ");
-        if (name.length() == 1 && name.charAt(0) == '0') {
+        String newProcessName = readString("Neuer Name ('0' Zurück) : ");
+        if (newProcessName.length() == 1 && newProcessName.charAt(0) == '0') {
             return;
         }
-        process.setName(name);
+        process.setName(newProcessName);
+        database.changeProcessName(process.getProcessID(), newProcessName);
     }
 
 
     public void setSuccessor(List<Process> listOfDependencies, Process successor) {
         for (Process process : listOfDependencies) {
             process.addSuccessor(successor);
+            database.addSuccessorToProcess(process.getProcessID(), successor.getProcessID());
         }
     }
 
