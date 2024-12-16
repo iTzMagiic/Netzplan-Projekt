@@ -237,6 +237,4 @@ public class Logic {
 
         CalculationProcess.calculateAll(listOfProcesses);
     }
-
-
 }
