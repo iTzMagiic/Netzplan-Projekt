@@ -48,12 +48,13 @@ public class UserInterface {
         boolean isCreatedUser;
         if (logic.askYesOrNo("Haben Sie bereits ein Konto?")){
             do {
+                logic.consoleClear();
                 String username = logic.readString("Benutzername: ");
                 String password = logic.readString("Passwort: ");
                 isExistUser = logic.loginToDatabase(username, password);
-                logic.consoleClear();
             } while (!isExistUser);
         } else {
+            logic.consoleClear();
             do {
                 System.out.println("Bitte geben Sie mind. 5 Zeichen an um sich zu Regestrieren");
                 String username = logic.readString("Benutzername: ");

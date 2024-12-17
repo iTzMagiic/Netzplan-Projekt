@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Logic {
 
@@ -64,7 +65,6 @@ public class Logic {
         // Lade alle Netzwerkpläne des Benutzers
         NetworkplanList.setNetworkplanList(database.getAllNetworkplans(userSession.getUserID()));
         if (NetworkplanList.getAllNetworkplans() == null || NetworkplanList.getAllNetworkplans().isEmpty()) {
-
             return;
         }
 
@@ -93,8 +93,9 @@ public class Logic {
                         .findFirst()
                         .orElse(null))
                 .filter(Objects::nonNull)
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new)); // Rückgabe einer modifizierbaren Liste
     }
+
 
 
     public void deleteNetworkplan(Networkplan networkplan) {
@@ -185,10 +186,10 @@ public class Logic {
     }
 
 
-    public void deleteSelectedProcessFromAllDependenciesList(Networkplan networkplan, Process deleteProcess) {
+    public void deleteSelectedProcessFromAllDependenciesList(Networkplan networkplan, Process toDeleteProcess) {
         for (Process process : networkplan.getListOfProcesses()) {
             for (Process successor : process.getListOfSuccessors()) {
-                if (successor.getNr() == deleteProcess.getNr()) {
+                if (successor.getNr() == toDeleteProcess.getNr()) {
                     process.deleteSuccessor(successor);
                     database.deleteSelectedProcessFromSuccessor(process.getProcessID(), successor.getProcessID());
                     break;
