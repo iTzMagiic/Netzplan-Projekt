@@ -10,7 +10,7 @@ public class Process {
     private int duration;
     private int faz, fez, saz, sez, fp, gp;
     private List<Process> listOfDependenciesProcesses = new ArrayList<>();
-    private List<Process> listOfSuccessorsProcesses = new ArrayList<>();
+    private List<Process> listOfSuccessors = new ArrayList<>();
 
 
     public Process(String name, int nr, int duration, int processID) {
@@ -22,15 +22,15 @@ public class Process {
 
 
     public void addSuccessor(Process process) {
-        listOfSuccessorsProcesses.add(process);
+        listOfSuccessors.add(process);
     }
 
-    public void deleteSuccessor(Process process) {
-        listOfSuccessorsProcesses.removeIf(value -> value.getName().equals(process.getName()));
+    public void deleteSuccessor(Process toDeleteProcess) {
+        listOfSuccessors.removeIf(successor -> successor.equals(toDeleteProcess));
     }
 
     public List<Process> getListOfSuccessors() {
-        return listOfSuccessorsProcesses;
+        return listOfSuccessors;
     }
 
     public void setDependencies(List<Process> dependenciesProcess) {
@@ -38,7 +38,7 @@ public class Process {
     }
 
     public void setSuccessors(List<Process> newSuccessors) {
-        this.listOfSuccessorsProcesses = newSuccessors;
+        this.listOfSuccessors = newSuccessors;
     }
 
     public String getDependenciesAsString() {

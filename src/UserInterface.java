@@ -48,12 +48,13 @@ public class UserInterface {
         boolean isCreatedUser;
         if (logic.askYesOrNo("Haben Sie bereits ein Konto?")){
             do {
+                logic.consoleClear();
                 String username = logic.readString("Benutzername: ");
                 String password = logic.readString("Passwort: ");
                 isExistUser = logic.loginToDatabase(username, password);
-                logic.consoleClear();
             } while (!isExistUser);
         } else {
+            logic.consoleClear();
             do {
                 System.out.println("Bitte geben Sie mind. 5 Zeichen an um sich zu Regestrieren");
                 String username = logic.readString("Benutzername: ");
@@ -67,7 +68,7 @@ public class UserInterface {
 
 
     public void showMainMenu() {
-        System.out.println("Willkommen");
+        System.out.println("Willkommen " + UserSession.getUserSession().getUsername());
         System.out.println("Was Möchten Sie machen?\n");
         System.out.println("'1' Neues Netzplan erstellen.");
         System.out.println("'2' Netzplan Anzeigen");

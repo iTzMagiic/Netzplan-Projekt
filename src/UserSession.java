@@ -10,6 +10,7 @@ public class UserSession {
 
     private static UserSession userSession;
     private int userID;
+    private String username;
 
 
 
@@ -25,6 +26,15 @@ public class UserSession {
     public void clearSession() {
         userSession = null;
         this.userID = 0;
+        this.username = "";
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
 
