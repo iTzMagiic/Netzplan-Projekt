@@ -80,6 +80,19 @@ public class Logic {
         return true;
     }
 
+    public boolean createAccount(String username, String password) {
+
+        if (!Rules.isUsernameValid(username) && !Rules.isPasswordValid(password)) {
+            System.out.println("Username oder Passwort nicht lang genug.");
+            return false;
+        }
+
+        userSession.setUserID(database.createAccount(username, password));
+        if (userSession.getUserID() == -1) {return false;}
+
+        return true;
+    }
+
 
     public Networkplan addNetworkplan(String networkplanName) {
         database.createNetworkplan(userSession.getUserID(), networkplanName);

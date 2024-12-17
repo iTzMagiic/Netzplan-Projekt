@@ -45,13 +45,24 @@ public class UserInterface {
 
     public void loginMenu() {
         boolean isExistUser;
-        do {
-            String username = logic.readString("Benutzername: ");
-            String password = logic.readString("Passwort: ");
-            System.out.println(username + " " + password);
-            isExistUser = logic.loginToDatabase(username, password);
-            logic.consoleClear();
-        } while (!isExistUser);
+        boolean isCreatedUser;
+        if (logic.askYesOrNo("Haben Sie bereits ein Konto?")){
+            do {
+                String username = logic.readString("Benutzername: ");
+                String password = logic.readString("Passwort: ");
+                isExistUser = logic.loginToDatabase(username, password);
+                logic.consoleClear();
+            } while (!isExistUser);
+        } else {
+            do {
+                System.out.println("Bitte geben Sie mind. 5 Zeichen an um sich zu Regestrieren");
+                String username = logic.readString("Benutzername: ");
+                String password = logic.readString("Passwort: ");
+                logic.consoleClear();
+
+                isCreatedUser = logic.createAccount(username, password);
+            } while (!isCreatedUser);
+        }
     }
 
 
