@@ -10,7 +10,7 @@ public class NetworkplanList {
     }
 
 
-    public static List<Networkplan> getNetworkplan() {
+    public static List<Networkplan> getAllNetworkplans() {
         return listOfPlan;
     }
 
