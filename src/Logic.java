@@ -13,60 +13,93 @@ public class Logic {
         database = new Database();
     }
 
+//    public void loadAllObjects() {
+//        NetworkplanList.setNetworkplanList(database.getAllNetworkplans(userSession.getUserID()));
+//        List<Process> listOfProcesses;
+//
+//        if (NetworkplanList.getAllNetworkplans() == null) {return;}
+//
+//        // Lädt alle Knoten in ein Netzplan, falls vorhanden
+//        for (Networkplan networkplan : NetworkplanList.getAllNetworkplans()) {
+//            listOfProcesses = database.getAllProcesses(networkplan.getNetworkplanID());
+//
+//            if (listOfProcesses == null) {continue;}
+//
+//            networkplan.setListOfProcesses(listOfProcesses);
+//
+//            for (Process process : listOfProcesses) {
+//                List<Integer> listOfDependenciesInteger = database.getAllDependencies(process.getProcessID());
+//                if (listOfDependenciesInteger == null) {continue;}
+//
+//                List<Process> listOfDependenciesProcesses = new ArrayList<>();
+//
+//                for (Integer dependency : listOfDependenciesInteger) {
+//                    // Suche den Prozess in networkplan.getListOfProcesses()
+//                    networkplan.getListOfProcesses().stream()
+//                            .filter(p -> p.getProcessID() == dependency)
+//                            .findFirst() // Hole den ersten passenden Prozess, falls vorhanden
+//                            .ifPresent(listOfDependenciesProcesses::add); // Füge ihn zur Liste hinzu, falls er existiert
+//                }
+//                process.setDependencies(listOfDependenciesProcesses);
+//            }
+//
+//            for (Process process : listOfProcesses) {
+//                List<Integer> listOfSuccessorInteger = database.getAllSuccessor(process.getProcessID());
+//                if (listOfSuccessorInteger == null) {continue;}
+//
+//                List<Process> listOfSuccessorProcesses = new ArrayList<>();
+//
+//                for (Integer successor : listOfSuccessorInteger) {
+//                    networkplan.getListOfProcesses().stream()
+//                            .filter(p -> p.getProcessID() == successor)
+//                            .findFirst() // Hole den ersten passenden Prozess, falls vorhanden
+//                            .ifPresent(listOfSuccessorProcesses::add); // Füge ihn zur Liste hinzu, falls er existiert
+//                }
+//                process.setSuccessors(listOfSuccessorProcesses);
+//            }
+//        }
+//    }
+
     public void loadAllObjects() {
+        // Lade alle Netzwerkpläne des Benutzers
         NetworkplanList.setNetworkplanList(database.getAllNetworkplans(userSession.getUserID()));
-        List<Process> listOfProcesses;
+        if (NetworkplanList.getAllNetworkplans() == null || NetworkplanList.getAllNetworkplans().isEmpty()) {
 
-        if (NetworkplanList.getNetworkplan() == null) {return;}
+            return;
+        }
 
-        // Lädt alle Knoten in ein Netzplan, falls vorhanden
-        for (Networkplan networkplan : NetworkplanList.getNetworkplan()) {
-            listOfProcesses = database.getAllProcesses(networkplan.getNetworkplanID());
-
-            if (listOfProcesses == null) {continue;}
+        // Verarbeite jeden Netzwerkplan
+        for (Networkplan networkplan : NetworkplanList.getAllNetworkplans()) {
+            List<Process> listOfProcesses = database.getAllProcesses(networkplan.getNetworkplanID());
+            if (listOfProcesses.isEmpty()) { continue; }
 
             networkplan.setListOfProcesses(listOfProcesses);
 
+            // Lade Abhängigkeiten und Nachfolger
             for (Process process : listOfProcesses) {
-                List<Integer> listOfDependenciesInteger = database.getAllDependencies(process.getProcessID());
-                if (listOfDependenciesInteger == null) {continue;}
+                List<Integer> dependenciesIds = database.getAllDependencies(process.getProcessID());
+                process.setDependencies(mapDependenciesOrSuccessors(dependenciesIds, listOfProcesses));
 
-                List<Process> listOfDependenciesProcesses = new ArrayList<>();
-
-                for (Integer dependency : listOfDependenciesInteger) {
-                    // Suche den Prozess in networkplan.getListOfProcesses()
-                    networkplan.getListOfProcesses().stream()
-                            .filter(p -> p.getProcessID() == dependency)
-                            .findFirst() // Hole den ersten passenden Prozess, falls vorhanden
-                            .ifPresent(listOfDependenciesProcesses::add); // Füge ihn zur Liste hinzu, falls er existiert
-                }
-                process.setDependencies(listOfDependenciesProcesses);
-            }
-
-            for (Process process : listOfProcesses) {
-                List<Integer> listOfSuccessorInteger = database.getAllSuccessor(process.getProcessID());
-                if (listOfSuccessorInteger == null) {continue;}
-
-                List<Process> listOfSuccessorProcesses = new ArrayList<>();
-
-                for (Integer successor : listOfSuccessorInteger) {
-                    networkplan.getListOfProcesses().stream()
-                            .filter(p -> p.getProcessID() == successor)
-                            .findFirst() // Hole den ersten passenden Prozess, falls vorhanden
-                            .ifPresent(listOfSuccessorProcesses::add); // Füge ihn zur Liste hinzu, falls er existiert
-                }
-                process.setSuccessors(listOfSuccessorProcesses);
+                List<Integer> successorIds = database.getAllSuccessor(process.getProcessID());
+                process.setSuccessors(mapDependenciesOrSuccessors(successorIds, listOfProcesses));
             }
         }
-
-
-
-
     }
+
+    private List<Process> mapDependenciesOrSuccessors(List<Integer> ids, List<Process> allProcesses) {
+        return ids.stream()
+                .map(id -> allProcesses.stream()
+                        .filter(p -> p.getProcessID() == id)
+                        .findFirst()
+                        .orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
 
     public void deleteNetworkplan(Networkplan networkplan) {
         database.deleteNetworkplanFromDatabase(networkplan.getNetworkplanID());
-        NetworkplanList.getNetworkplan().removeIf(networkplanSearching -> networkplanSearching.getNetworkplanID() == networkplan.getNetworkplanID());
+        NetworkplanList.getAllNetworkplans().removeIf(networkplanSearching -> networkplanSearching.getNetworkplanID() == networkplan.getNetworkplanID());
     }
 
     public boolean loginToDatabase(String username, String password) {
@@ -281,6 +314,7 @@ public class Logic {
 
     public void setSuccessor(List<Process> listOfDependencies, Process successor) {
         for (Process process : listOfDependencies) {
+            //TODO:: HIER IST EIN FEHLER !!! MIT ADDSUCCESSOR()
             process.addSuccessor(successor);
             database.addSuccessorToProcess(process.getProcessID(), successor.getProcessID());
         }

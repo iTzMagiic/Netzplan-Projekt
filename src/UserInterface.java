@@ -161,7 +161,7 @@ public class UserInterface {
             System.out.println("Vorhandene Netzpläne:");
 
             int index = 1;
-            for (Networkplan networkplan : NetworkplanList.getNetworkplan()) {
+            for (Networkplan networkplan : NetworkplanList.getAllNetworkplans()) {
                 mapNetworkplan.put(index, networkplan.getName());
                 System.out.println("'" + index + "'" + " : " + mapNetworkplan.get(index));
                 index++;
@@ -172,7 +172,7 @@ public class UserInterface {
 
             if (choice == 0) {
                 cancel = true;
-            } else if (choice <= NetworkplanList.getNetworkplan().size() && choice >= 0) {
+            } else if (choice <= NetworkplanList.getAllNetworkplans().size() && choice >= 0) {
                 logic.consoleClear();
                 choice--;
                 showSelectedNetworkplanMenu(choice);
@@ -184,7 +184,7 @@ public class UserInterface {
 
     public void showSelectedNetworkplanMenu(int choice) {
         int option;
-        Networkplan networkplan = NetworkplanList.getNetworkplan().get(choice);
+        Networkplan networkplan = NetworkplanList.getAllNetworkplans().get(choice);
         do {
             System.out.println("Ausgewählter Netzplan : " + networkplan.toString() + "\n\n");
             System.out.println("'1' Netzplan ausgeben");
