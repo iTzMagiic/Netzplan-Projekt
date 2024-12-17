@@ -7,6 +7,8 @@ public class Database {
     private final String USER = "networkplanUser";
     private final String PASSWORD = "Passwort123";
 
+
+
     public boolean testConnection() {
         try {
             Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -17,8 +19,9 @@ public class Database {
         return false;
     }
 
+
     public int getUserID(String username, String password) {
-        String sql = "SELECT * FROM user WHERE username = ? AND password = ?";
+        String sql = "SELECT id FROM user WHERE username = ? AND password = ?";
 
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
         PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -35,8 +38,9 @@ public class Database {
         return -1;
     }
 
+
     public boolean isUsernameExist(String username) {
-        String sql = "SELECT * FROM user WHERE username = ?";
+        String sql = "SELECT username FROM user WHERE username = ?";
 
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
         PreparedStatement preparedStatement = connection.prepareStatement(sql)){
@@ -66,8 +70,9 @@ public class Database {
         }
     }
 
+
     public int getNetwokrplanID(int userID, String networkplanName) {
-        String sql = "SELECT * FROM networkplan WHERE user_id = ? AND name = ?";
+        String sql = "SELECT id FROM networkplan WHERE user_id = ? AND name = ?";
 
         try(Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
         PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -83,6 +88,7 @@ public class Database {
         }
         return -1;
     }
+
 
     public void addProcessToNetworkplan(int networkplanID, String processName, int processDuration, int processNr) {
         String sql = "INSERT INTO process (networkplan_id, name, duration, nr) VALUES (?, ?, ?, ?)";
@@ -101,7 +107,7 @@ public class Database {
     }
 
     public int getProcessID (int networkplanID, String processName) {
-        String sql = "SELECT * FROM process WHERE networkplan_id = ? AND name = ?";
+        String sql = "SELECT id FROM process WHERE networkplan_id = ? AND name = ?";
 
         try(Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -202,7 +208,7 @@ public class Database {
     }
 
     public List<Networkplan> getAllNetworkplans(int userID) {
-        String sql = "SELECT * FROM networkplan WHERE user_id = ?";
+        String sql = "SELECT id, name FROM networkplan WHERE user_id = ?";
         List<Networkplan> listOfNetworkplan = new ArrayList<>();
 
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -220,7 +226,7 @@ public class Database {
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
         }
-        return null;
+        return new ArrayList<>();
     }
 
     //TODO:: Process muss auch seine Dependencies und Successors wieder bekommen
@@ -245,12 +251,12 @@ public class Database {
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
         }
-        return null;
+        return new ArrayList<>();
     }
 
 
     public List<Integer> getAllSuccessor(int processID) {
-        String sql = "SELECT * FROM successor WHERE process_id = ?";
+        String sql = "SELECT successor_id FROM successor WHERE process_id = ?";
         List<Integer> listOfProcessIDs = new ArrayList<>();
 
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -266,12 +272,12 @@ public class Database {
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
         }
-        return null;
+        return new ArrayList<>();
     }
 
 
     public List<Integer> getAllDependencies(int processID) {
-        String sql = "SELECT * FROM dependencies WHERE process_id = ?";
+        String sql = "SELECT dependency_id FROM dependencies WHERE process_id = ?";
         List<Integer> listOfProcessIDs = new ArrayList<>();
 
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -287,7 +293,7 @@ public class Database {
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
         }
-        return null;
+        return new ArrayList<>();
     }
 
 
@@ -323,4 +329,20 @@ public class Database {
         return -1;
     }
 
+    public String getUsername(int userID) {
+        String sql = "SELECT username FROM user WHERE id = ?";
+
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+        PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userID);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getString("username");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("SQLException: " + e.getMessage());
+        }
+        return "Hacker";
+    }
 }

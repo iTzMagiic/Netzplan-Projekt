@@ -68,7 +68,7 @@ public class UserInterface {
 
 
     public void showMainMenu() {
-        System.out.println("Willkommen");
+        System.out.println("Willkommen " + UserSession.getUserSession().getUsername());
         System.out.println("Was Möchten Sie machen?\n");
         System.out.println("'1' Neues Netzplan erstellen.");
         System.out.println("'2' Netzplan Anzeigen");
