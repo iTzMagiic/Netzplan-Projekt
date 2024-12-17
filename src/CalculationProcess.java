@@ -66,7 +66,6 @@ public class CalculationProcess {
             listOFProcesses.get(lastProcess).setSez(minSAZ);
             calculateSAZ(listOFProcesses.get(lastProcess));
         }
-
     }
 
 

@@ -52,7 +52,6 @@ public class UserInterface {
             isExistUser = logic.loginToDatabase(username, password);
             logic.consoleClear();
         } while (!isExistUser);
-
     }
 
 

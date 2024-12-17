@@ -35,20 +35,6 @@ public class Database {
         return -1;
     }
 
-    public void createAccount(String username, String password) {
-        String sql = "INSERT INTO user (username, password) VALUES (?, ?)";
-
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-        PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("SQLException: " + e.getMessage());
-        }
-    }
-
-
     public boolean isUsernameExist(String username) {
         String sql = "SELECT * FROM user WHERE username = ?";
 
@@ -59,8 +45,6 @@ public class Database {
                 if (resultSet.next()) {
                     return true;
                 }
-            } catch (SQLException e) {
-                System.out.println("SQLException: " + e.getMessage());
             }
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
@@ -93,8 +77,6 @@ public class Database {
                 if (resultSet.next()) {
                     return resultSet.getInt("id");
                 }
-            } catch (SQLException e) {
-                System.out.println("SQLException: " + e.getMessage());
             }
         } catch  (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
@@ -129,8 +111,6 @@ public class Database {
                 if (resultSet.next()) {
                     return resultSet.getInt("id");
                 }
-            } catch (SQLException e) {
-                System.out.println("SQLException: " + e.getMessage());
             }
         } catch  (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
@@ -324,18 +304,23 @@ public class Database {
     }
 
 
+    public int createAccount(String username, String password) {
+        String sql = "INSERT INTO user (username, password) VALUES (?, ?)";
 
-
-
-
-
-
-
-
-
-
-
-
-
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+        PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+            preparedStatement.executeUpdate();
+            try (ResultSet resultSetGeneratedKey = preparedStatement.getGeneratedKeys()) {
+                if (resultSetGeneratedKey.next()) {
+                    return resultSetGeneratedKey.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("SQLException: " + e.getMessage());
+        }
+        return -1;
+    }
 
 }
