@@ -9,17 +9,6 @@ public class Database {
 
 
 
-    public boolean testConnection() {
-        try {
-            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            return true;
-        } catch (SQLException e) {
-            System.out.println("SQLException: " + e.getMessage());
-        }
-        return false;
-    }
-
-
     public int getUserID(String username, String password) {
         String sql = "SELECT id FROM user WHERE username = ? AND password = ?";
 
@@ -229,7 +218,7 @@ public class Database {
         return new ArrayList<>();
     }
 
-    //TODO:: Process muss auch seine Dependencies und Successors wieder bekommen
+
     public List<Process> getAllProcesses(int networkplanID) {
         String sql = "SELECT * FROM process WHERE networkplan_id = ?";
         List<Process> listOfProcess = new ArrayList<>();

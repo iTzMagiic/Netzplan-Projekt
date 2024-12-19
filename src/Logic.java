@@ -70,6 +70,7 @@ public class Logic {
         return true;
     }
 
+
     public boolean createAccount(String username, String password) {
 
         if (database.isUsernameExist(username)) {
@@ -102,10 +103,6 @@ public class Logic {
     }
 
 
-    public void addProcessToNetworkplan(Networkplan networkplan, Process process) {
-        networkplan.addProcess(process);
-    }
-
     public Process createProcess(Networkplan networkplan, String processName, int processNumber, int duration) {
         database.addProcessToNetworkplan(networkplan.getNetworkplanID(), processName, duration, processNumber);
         int processID = database.getProcessID(networkplan.getNetworkplanID(), processName);
@@ -114,8 +111,6 @@ public class Logic {
         networkplan.addProcess(process);
         return process;
     }
-
-
 
 
     public boolean isAllowedToCreateDependencies(Networkplan networkplan) {
@@ -175,7 +170,6 @@ public class Logic {
                     }
                     System.out.println("\n");
                 }
-                //TODO:: Eine Liste aller möglichen Vorgänger hier angeben im Sysout
                 dependencie = readInt("Bitte geben Sie ein Vorgänger an ('0' zum Abbrechen): ");
 
 
@@ -248,6 +242,7 @@ public class Logic {
         addDependencies(networkplan, process);
     }
 
+
     public void editProcessDuration(Process process) {
         while (true) {
             consoleClear();
@@ -265,6 +260,7 @@ public class Logic {
         }
     }
 
+
     public void editProcessName(Process process) {
         System.out.printf("Bearbeiten des Namen von : %S\n", process.getName());
         String newProcessName = readString("Neuer Name ('0' Zurück) : ");
@@ -278,7 +274,6 @@ public class Logic {
 
     public void setSuccessor(List<Process> listOfDependencies, Process successor) {
         for (Process process : listOfDependencies) {
-            //TODO:: HIER IST EIN FEHLER !!! MIT ADDSUCCESSOR()
             process.addSuccessor(successor);
             database.addSuccessorToProcess(process.getProcessID(), successor.getProcessID());
         }
@@ -340,7 +335,6 @@ public class Logic {
 
     public void startCalculate(Networkplan networkplan) {
         List<Process> listOfProcesses = networkplan.getListOfProcesses();
-
         CalculationProcess.calculateAll(listOfProcesses);
     }
 }
