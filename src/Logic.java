@@ -175,7 +175,6 @@ public class Logic {
                     }
                     System.out.println("\n");
                 }
-                //TODO:: Eine Liste aller möglichen Vorgänger hier angeben im Sysout
                 dependencie = readInt("Bitte geben Sie ein Vorgänger an ('0' zum Abbrechen): ");
 
 
@@ -278,7 +277,6 @@ public class Logic {
 
     public void setSuccessor(List<Process> listOfDependencies, Process successor) {
         for (Process process : listOfDependencies) {
-            //TODO:: HIER IST EIN FEHLER !!! MIT ADDSUCCESSOR()
             process.addSuccessor(successor);
             database.addSuccessorToProcess(process.getProcessID(), successor.getProcessID());
         }
