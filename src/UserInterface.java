@@ -334,6 +334,4 @@ public class UserInterface {
         } while (logic.readInt("'0' Zurück : ") != 0);
         logic.consoleClear();
     }
-
-
 }
